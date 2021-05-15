@@ -379,9 +379,9 @@ function detectHit() {
   console.log('ogreLeft', ogreLeft)
 
   /* 
-  checking both sides with an or will always be true!
+  checking both sides with an 'or' will always be true!
   (hero.x <= ogre.x + ogre.width || hero.x + hero.width >= ogre.x)
-  hits are only detected only when BOTH are ture!
+  hits are only detected only when BOTH are true!
   (hero.x <= ogre.x + ogre.width && hero.x + hero.width >= ogre.x)
   */
 
