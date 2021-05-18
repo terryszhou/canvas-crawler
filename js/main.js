@@ -7,7 +7,33 @@ const ctx = canvas.getContext('2d')
 canvas.setAttribute("height", getComputedStyle(canvas)["height"])
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 
+let frameCount = 0
+let score = 0
 let runGame = setInterval(gameLoop, 60)
+
+var walls = []
+
+walls.push({
+    x: canvas.width - 170,
+    y: 40,
+    width: 10,
+    height: 40
+  },
+  {
+    x: canvas.width - 250,
+    y: 80,
+    width: 20,
+    height: 20
+  }
+)
+
+function drawWalls() {
+  ctx.fillStyle = 'grey'
+
+  for(i = 0; i < walls.length; i++){
+    ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
+  }
+}
 
 class Crawler{
     constructor(x, y, color, width, height) {
@@ -24,24 +50,20 @@ class Crawler{
     }
 }
 
-let rando = new Crawler(5, 5, 'purple', 40, 140)
-let ogre = new Crawler(500, 100, "#bada55", 40, 40)
-let hero = new Crawler(100, 200, "hotpink", 40, 40,)
+let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20)]
+let hero = new Crawler(100, 200, "hotpink", 20, 20,)
+// let bullet = new Crawler(hero.x, hero.y, 'purple', 2, 2)
 
-window.addEventListener("keydown", keysPressed, false)
-window.addEventListener("keyup", keysReleased, false)
-
-var keys = []
-
-function keysPressed(e) {
+let keys = []
+window.addEventListener("keydown", function (e) {
   keys[e.keyCode] = true
-}
-function keysReleased(e) {
+})
+window.addEventListener("keyup", function (e) {
   keys[e.keyCode] = false
-}
+})
 
 function move() {
-  const speed = 10
+  const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
@@ -52,8 +74,30 @@ function move() {
     hero.x += speed
   }
 }
+
+function detectWalls() {
+  for (i = 0; i < walls.length; i++)
+  
+}
+
+function createOgres() {
+  if (ogres.length < 4) {
+    ogres.push(new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
+    ogres.forEach(ogre => {
+      ogre.render()
+    })
+  }
+}
+
+function attack() {
+  if(keys[32]) {
+    hero.color = "blue"
+  } else {
+    hero.color = "hotpink"
+  }
+}
  
-function ogreMove() {
+function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
   let speed = 3
@@ -71,40 +115,112 @@ function ogreMove() {
   }
 }
 
-
-function gameLoop() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height)
-  move()
-  ogreMove()
-  movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  detectHit()
-  if (ogre.alive) {
-      ogre.render()
-  }
-  hero.render()
-}
-
-function detectHit() {
+function detectHit(ogre) {
   if (
     hero.x + hero.width >= ogre.x &&
     hero.x <= ogre.x + ogre.width &&
     hero.y <= ogre.y + ogre.height &&
     hero.y + hero.height >= ogre.y
     ) {
-      endGame()
+      endGame(ogre)
     }
 }
 
-function endGame() {
+function detectWalls(wall) {
+  if (
+    hero.x + hero.width >= wall.x &&
+    hero.x <= wall.x + wall.width &&
+    hero.y <= wall.y + wall.height &&
+    hero.y + hero.height >= wall.y
+    ) {
+      hero.x = wall.x
+      hero.y = wall.y
+    }
+}
+
+function endGame(ogre) {
+  if(keys[32]) {
   ogre.alive = false
   clearInterval(runGame)
-  movementDisplay.innerText = "YOU KILLED THE OGRE!"
+  movementDisplay.innerText = "YOU WIN!"
+  } else {
+  hero.alive = false
+  clearInterval(runGame)
+  movementDisplay.innerText = "YOU WERE KILLED BY THE OGRE!"
+  }
+}
+
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  drawWalls()
+  frameCount++
+  if (frameCount % 100 === 0) {
+    createOgres()
+  }
+  const speed = 8
+  // for (j = 0; j < walls.length; j++) {
+  //   detectWalls(walls[j])
+  // }
+  move()
+  attack()
+  movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  
+  for (i = 0; i < ogres.length; i++) {
+    if (ogres[i].alive) {
+      ogreMove(ogres[i])
+      detectHit(ogres[i])
+      ogres[i].render()
+    }
+  }
+  hero.render()
 }
 
 
 // DEFECTIVES
 
-// OLD FORM FOR SMOOTH MOVEMENT. SINCE STREAMLINED.
+// HITS INVISIBLE WALLS
+// function move() {
+//   const speed = 8
+//   for (i = 0; i < walls.length; i++) {
+//     if((keys[38] || keys[87]) && hero.y > 0 && hero.y > walls[i].y + walls[i].height) {
+//       hero.y -= speed
+//     } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height && hero.y + hero.height < walls[i].y) { 
+//       hero.y += speed
+//     } else if((keys[37] || keys[65]) && hero.x > 0 && hero.x > walls[i].x + walls[i].width) {
+//       hero.x -= speed
+//     } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width && hero.x + hero.width < walls[i].x) {
+//       hero.x += speed
+//     }
+//   }
+// }
+
+// SMOOTH MOVEMENT, SHORT CODE, NO DIAGONALS
+// window.addEventListener("keydown", keysPressed, false)
+// window.addEventListener("keyup", keysReleased, false)
+
+// var keys = []
+
+// function keysPressed(e) {
+//   keys[e.keyCode] = true
+// }
+// function keysReleased(e) {
+//   keys[e.keyCode] = false
+// }
+
+// function move() {
+//   const speed = 8
+//   if((keys[38] || keys[87]) && hero.y > 0) {
+//     hero.y -= speed
+//   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
+//     hero.y += speed
+//   } else if((keys[37] || keys[65]) && hero.x > 0) {
+//     hero.x -= speed
+//   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
+//     hero.x += speed
+//   }
+// }
+
+// SMOOTH MOVEMENT. LONG FORM, MORE RELIANT ON TRUE/FALSE STATEMENTS.
 // var Keys = {
 //   up: false,
 //   down: false,
