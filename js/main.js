@@ -10,26 +10,26 @@ canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let frameCount = 0
 let score = 0
 let runGame = setInterval(gameLoop, 60)
+let heroFacing
 
 var walls = []
 
 walls.push({
-    x: canvas.width - 170,
+    x: 240,
     y: 40,
-    width: 10,
-    height: 40
+    width: 20,
+    height: 60
   },
   {
-    x: canvas.width - 250,
+    x: 180,
     y: 80,
-    width: 20,
+    width: 60,
     height: 20
   }
 )
 
 function drawWalls() {
   ctx.fillStyle = 'grey'
-
   for(i = 0; i < walls.length; i++){
     ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
   }
@@ -66,20 +66,59 @@ function move() {
   const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
+    heroFacing = "north"
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
+    heroFacing = "south"
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
+    heroFacing = "west"
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
     hero.x += speed
+    heroFacing = "east"
   }
 }
 
-function detectWalls() {
-  for (i = 0; i < walls.length; i++)
-  
+function detectWalls(wall) {
+  let speed = 8
+      if (
+        hero.x + hero.width >= wall.x &&
+        hero.x <= wall.x + wall.width &&
+        hero.y <= wall.y + wall.height &&
+        hero.y + hero.height >= wall.y
+      ) { 
+          if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
+            hero.y += speed
+          } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
+            hero.y -= speed
+          } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
+            hero.x += speed
+          } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
+            hero.x -= speed
+          }
+        }
 }
 
+function detectWalls(wall) {
+  let speed = 8
+      if (
+        hero.x + hero.width >= wall.x &&
+        hero.x <= wall.x + wall.width &&
+        hero.y <= wall.y + wall.height &&
+        hero.y + hero.height >= wall.y
+      ) { 
+          if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
+            hero.y += speed
+          } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
+            hero.y -= speed
+          } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
+            hero.x += speed
+          } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
+            hero.x -= speed
+          }
+        }
+}
+      
 function createOgres() {
   if (ogres.length < 4) {
     ogres.push(new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
@@ -126,18 +165,6 @@ function detectHit(ogre) {
     }
 }
 
-function detectWalls(wall) {
-  if (
-    hero.x + hero.width >= wall.x &&
-    hero.x <= wall.x + wall.width &&
-    hero.y <= wall.y + wall.height &&
-    hero.y + hero.height >= wall.y
-    ) {
-      hero.x = wall.x
-      hero.y = wall.y
-    }
-}
-
 function endGame(ogre) {
   if(keys[32]) {
   ogre.alive = false
@@ -157,11 +184,10 @@ function gameLoop() {
   if (frameCount % 100 === 0) {
     createOgres()
   }
-  const speed = 8
-  // for (j = 0; j < walls.length; j++) {
-  //   detectWalls(walls[j])
-  // }
   move()
+  for (j = 0; j < walls.length; j++) {
+    detectWalls(walls[j])
+  }
   attack()
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
   
@@ -177,6 +203,227 @@ function gameLoop() {
 
 
 // DEFECTIVES
+
+// LOWERED SPEED. UNEXPECTED 'QUICKSAND' EFFECT.
+// function detectWalls(wall) {
+//   let speed = 4
+//       if (
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width &&
+//         hero.y <= wall.y + wall.height &&
+//         hero.y + hero.height >= wall.y
+//       ) { 
+//           if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
+//             // hero.y = wall.y + wall.height
+//             hero.y -= speed
+//           } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
+//             // hero.y = wall.y - hero.height
+//             hero.y += speed
+//           } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
+//             // hero.x = wall.x + wall.width
+//             hero.x += speed
+//           } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
+//             // hero.x = wall.x -hero.width
+//             hero.x -= speed
+//           }
+//         }
+// }
+
+// DITTO BELOW
+// function detectWalls(wall) {
+//   if (
+//     hero.x + hero.width >= wall.x &&
+//     hero.x <= wall.x + wall.width &&
+//     hero.y <= wall.y + wall.height &&
+//     hero.y + hero.height >= wall.y
+//   ) {
+//   if(hero.y + hero.height >= wall.y && 
+//     hero.x + hero.width >= wall.x && 
+//     hero.x <= wall.x + wall.width &&
+//     (keys[40] || keys[83])) {
+//       hero.y = wall.y - hero.height
+//     }
+//   if(hero.y <= wall.y + wall.height &&
+//     hero.x + hero.width >= wall.x &&
+//     hero.x <= wall.x + wall.width && 
+//     (keys[38] || keys[87])) {
+//       hero.y = wall.y + wall.height
+//     }
+//   if(hero.x + hero.width >= wall.x &&
+//     hero.y + hero.height >= wall.y &&
+//     hero.y <= wall.y + wall.height &&
+//     (keys[39] || keys[68])){
+//       hero.x = wall.x - hero.width
+//     }
+//   if(hero.x <= wall.x + wall.width &&
+//     hero.y + hero.height >= wall.y &&
+//     hero.y <= wall.y + wall.height &&
+//     (keys[37] || keys[65])) {
+//       hero.x = wall.x + wall.width
+//     }
+//   }
+// }
+
+// DITTO BELOW
+// function detectWalls(wall) {
+//   let speed = 8
+//       if (
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width &&
+//         hero.y <= wall.y + wall.height &&
+//         hero.y + hero.height >= wall.y
+//       ) { 
+//           if ((!keys[40] || !keys[83]) && hero.y <= wall.y + wall.height) {
+//             //up statement
+//             hero.y = wall.y + wall.height
+//           } else if ((!keys[38] || !keys[87]) && hero.y + hero.height >= wall.y) { 
+//             //down statement
+//             hero.y = wall.y - hero.height
+//           } else if ((!keys[39] || !keys[68]) && hero.x <= wall.x + wall.width) {
+//             //left statement
+//             hero.x = wall.x + wall.width
+//           } else if ((!keys[37] || !keys[65]) && hero.x + hero.width >= wall.x) {
+//             //right statement
+//             hero.x = wall.x -hero.width
+//           }
+//         }
+// }
+
+// WORKS FOR DIRECT CONTACT; SLIPS WHEN ALTERNATE AXIS INPUTS ARE DETECTED
+// function detectWalls(wall) {
+//   let speed = 8
+//       if (
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width &&
+//         hero.y <= wall.y + wall.height &&
+//         hero.y + hero.height >= wall.y
+//       ) { 
+//           if ((keys[38] || keys[87]) && hero.y <= wall.y + wall.height) {
+//             hero.y = wall.y + wall.height
+//           } else if ((keys[40] || keys[83]) && hero.y + hero.height >= wall.y) { 
+//             hero.y = wall.y - hero.height
+//           } else if ((keys[37] || keys[65]) && hero.x <= wall.x + wall.width) {
+//             hero.x = wall.x + wall.width
+//           } else if ((keys[39] || keys[68]) && hero.x + hero.width >= wall.x) {
+//             hero.x = wall.x -hero.width
+//           }
+//         }
+// }
+
+// ZIPS HERO TO BOTTOM-RIGHT CORNER OF WALL UPON CONTACT
+// -- Without nested conditional, does the same as above when invisible thresholds are crossed.
+// function detectWalls(wall) {
+//   let speed = 8
+//       if (
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width &&
+//         hero.y <= wall.y + wall.height &&
+//         hero.y + hero.height >= wall.y
+//       ) 
+//       {
+//       if(hero.y + hero.height >= wall.y && 
+//         hero.x + hero.width >= wall.x && 
+//         hero.x <= wall.x + wall.width) {
+//           speed = 0
+//           hero.y = wall.y - hero.height
+//         }
+//       if(hero.y <= wall.y + wall.height &&
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width) {
+//           speed = 0
+//           hero.y = wall.y + wall.height
+//         }
+//       if(hero.x + hero.width >= wall.x &&
+//         hero.y + hero.height >= wall.y &&
+//         hero.y <= wall.y + wall.height) {
+//           speed = 0
+//           hero.x = wall.x - hero.width
+//         }
+//       if(hero.x <= wall.x + wall.width &&
+//         hero.y + hero.height >= wall.y &&
+//         hero.y <= wall.y + wall.height) {
+//           speed = 
+//           hero.x = wall.x + wall.width
+//         }
+//       }
+// }
+
+// ONLY TRIGGERS FIRST NESTED CONDITIONAL
+// -- Without nesting, teleports hero when crossing wall thresholdl regardless of location
+// function detectWalls(wall) {
+//   let speed = 8
+//   let currentX = hero.x
+//   let currentY = hero.y
+//       // if (
+//       //   hero.x + hero.width >= wall.x &&
+//       //   hero.x <= wall.x + wall.width &&
+//       //   hero.y <= wall.y + wall.height &&
+//       //   hero.y + hero.height >= wall.y
+//       // ) {
+//       //     console.log(hero.height)
+//       //     console.log(wall.y)
+//       //     if (hero.y <= wall.y + wall.height) {
+//       //       speed = 0
+//       //       hero.y = wall.y + wall.height
+//       //     } else if (hero.y + hero.height >= wall.y) { 
+//       //       speed = 0
+//       //       wall.y = hero.y + hero.height
+//       //     } else if (hero.x <= wall.x + wall.width) {
+//       //       speed = 0
+//       //       hero.x = wall.x + wall.width
+//       //     } else if (hero.x + hero.width >= wall.x) {
+//       //       speed = 0
+//       //       wall.x = hero.x + hero.width
+//       //     }
+//       //   }
+
+// FREEZES ALL MOVEMENT
+// function move(wall) {
+//   const speed = 8
+//       if (
+//         hero.x + hero.width >= wall.x &&
+//         hero.x <= wall.x + wall.width &&
+//         hero.y <= wall.y + wall.height &&
+//         hero.y + hero.height >= wall.y
+//       ) {
+//         if((keys[38] || keys[87]) && hero.y > 0 && hero.y >= wall.y + wall.height) {
+//           hero.y -= speed
+//         } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height && hero.y + hero.height <= wall.y) { 
+//           hero.y += speed
+//         } else if((keys[37] || keys[65]) && hero.x > 0 && hero.x >= wall.x + wall.width) {
+//           hero.x -= speed
+//         } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width && hero.x + hero.width <= wall.x) {
+//           hero.x += speed
+//         }
+//         }
+// }
+
+//  SHOOTS HERO UPWARDS
+// // function detectCanvasBounds() {
+// //   const speed = 8
+// //   if (hero.y > 0) {
+// //     hero.y -= speed
+// //   } else if (hero.y + hero.height < canvas.height) {
+// //     hero.y += speed
+// //   } else if (hero.x > 0) {
+// //     hero.x -= speed
+// //   } else if (hero.x + hero.width < canvas.width) {
+// //     hero.x += speed
+// //   }
+// // }
+
+// DETECTS HERO MOVEMENT THROUGH WALLS, BUT DOESN'T STOP IT.
+// function detectWalls(wall) {
+  //   if (
+  //     hero.x + hero.width >= wall.x &&
+  //     hero.x <= wall.x + wall.width &&
+  //     hero.y <= wall.y + wall.height &&
+  //     hero.y + hero.height >= wall.y
+  //     ) {
+  //       heroMovement = -heroMovement
+  //       console.log(heroMovement)
+  //     }
+  // }
 
 // HITS INVISIBLE WALLS
 // function move() {
