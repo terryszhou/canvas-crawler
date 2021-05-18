@@ -140,57 +140,37 @@ function attack() {
     hero.color = "hotpink"
   }
 }
- 
-// function ogreMove(ogre) {
-//   let diffX = hero.x - ogre.x
-//   let diffY = hero.y - ogre.y
-//   let speed = 2.5
-
-//   if(diffX > 0) {
-//     ogre.x += speed
-//   } else {
-//     ogre.x -= speed
-//   }
-
-//   if (diffY > 0) {
-//     ogre.y += speed
-//   } else {
-//     ogre.y -= speed
-//   }
-// }
 
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
-  console.log(diffX)
-  console.log(diffY)
   let speed = 3
   let randomNum = Math.floor((Math.random()*2)*(Math.random() < 0.5 ? -1 : 1))
 
-  if (diffX > 0 && diffX < 125) {
+  if (diffX > 0 && diffX < 125 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
-  } else if (diffX > 125) {
+  } else if (diffX > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
   }
   
-  if (diffX < 0 && diffX > -125) {
+  if (diffX < 0 && diffX > -125 && ogre.x > 0) {
     ogre.x -= speed
-  } else if (diffX < -125) {
+  } else if (diffX < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
   }
 
-  if (diffY > 0 && diffY < 125) {
+  if (diffY > 0 && diffY < 125 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
-  } else if (diffY > 125) {
+  } else if (diffY > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
   }
   
-  if (diffY < 0 && diffY > -125) {
+  if (diffY < 0 && diffY > -125 && ogre.y > 0) {
     ogre.y -= speed
-  } else if (diffY < -125) {
+  } else if (diffY < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
   }
