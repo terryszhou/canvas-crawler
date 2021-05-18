@@ -164,18 +164,35 @@ function ogreMove(ogre) {
   let diffY = hero.y - ogre.y
   console.log(diffX)
   console.log(diffY)
-  let speed = 4
+  let speed = 3
+  let randomNum = Math.floor((Math.random()*2)*(Math.random() < 0.5 ? -1 : 1))
 
   if (diffX > 0 && diffX < 125) {
     ogre.x += speed
-  } else if (diffX < 0 && diffX > -125) {
+  } else if (diffX > 125) {
+    ogre.x += randomNum
+    ogre.y += randomNum
+  }
+  
+  if (diffX < 0 && diffX > -125) {
     ogre.x -= speed
+  } else if (diffX < -125) {
+    ogre.x -= randomNum
+    ogre.y -= randomNum
   }
 
   if (diffY > 0 && diffY < 125) {
     ogre.y += speed
-  } else if (diffY < 0 && diffY > -125) {
+  } else if (diffY > 125) {
+    ogre.x += randomNum
+    ogre.y += randomNum
+  }
+  
+  if (diffY < 0 && diffY > -125) {
     ogre.y -= speed
+  } else if (diffY < -125) {
+    ogre.x -= randomNum
+    ogre.y -= randomNum
   }
 }
 
