@@ -10,7 +10,6 @@ canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 let frameCount = 0
 let score = 0
 let runGame = setInterval(gameLoop, 60)
-let heroFacing
 
 var walls = []
 
@@ -21,11 +20,36 @@ walls.push({
     height: 60
   },
   {
-    x: 180,
+    x: 60,
     y: 80,
-    width: 60,
+    width: 180,
+    height: 20
+  },
+  {
+    x: 60,
+    y: 100,
+    width: 20,
+    height: 200
+  },
+  {
+    x: 60,
+    y: 300,
+    width: 300,
+    height: 20
+  },
+  {
+    x: 340,
+    y: 180,
+    width: 20,
+    height: 120
+  },
+  {
+    x: 340,
+    y: 160,
+    width: 120,
     height: 20
   }
+
 )
 
 function drawWalls() {
@@ -36,13 +60,14 @@ function drawWalls() {
 }
 
 class Crawler{
-    constructor(x, y, color, width, height) {
+    constructor(x, y, color, width, height, facing) {
       this.x = x
       this.y = y
       this.color = color
       this.width = width
       this.height = height
       this.alive = true
+      this.facing = null
     }
     render() {
       ctx.fillStyle = this.color
@@ -50,8 +75,8 @@ class Crawler{
     }
 }
 
-let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20)]
-let hero = new Crawler(100, 200, "hotpink", 20, 20,)
+let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+let hero = new Crawler(100, 200, "hotpink", 20, 20, null)
 // let bullet = new Crawler(hero.x, hero.y, 'purple', 2, 2)
 
 let keys = []
@@ -66,54 +91,34 @@ function move() {
   const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
-    heroFacing = "north"
+    hero.facing = "north"
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
-    heroFacing = "south"
+    hero.facing = "south"
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
-    heroFacing = "west"
+    hero.facing = "west"
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
     hero.x += speed
-    heroFacing = "east"
+    hero.facing = "east"
   }
 }
 
-function detectWalls(wall) {
+function detectWalls(hero, wall) {
   let speed = 8
-      if (
-        hero.x + hero.width >= wall.x &&
-        hero.x <= wall.x + wall.width &&
-        hero.y <= wall.y + wall.height &&
-        hero.y + hero.height >= wall.y
+    if (
+      hero.x + hero.width >= wall.x &&
+      hero.x <= wall.x + wall.width &&
+      hero.y <= wall.y + wall.height &&
+      hero.y + hero.height >= wall.y
       ) { 
-          if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
+          if (hero.facing == "north" && hero.y <= wall.y + wall.height) {
             hero.y += speed
-          } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
+          } else if (hero.facing == "south" && hero.y + hero.height >= wall.y) { 
             hero.y -= speed
-          } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
+          } else if (hero.facing == "west" && hero.x <= wall.x + wall.width) {
             hero.x += speed
-          } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
-            hero.x -= speed
-          }
-        }
-}
-
-function detectWalls(wall) {
-  let speed = 8
-      if (
-        hero.x + hero.width >= wall.x &&
-        hero.x <= wall.x + wall.width &&
-        hero.y <= wall.y + wall.height &&
-        hero.y + hero.height >= wall.y
-      ) { 
-          if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
-            hero.y += speed
-          } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
-            hero.y -= speed
-          } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
-            hero.x += speed
-          } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
+          } else if (hero.facing == "east" && hero.x + hero.width >= wall.x) {
             hero.x -= speed
           }
         }
@@ -136,20 +141,40 @@ function attack() {
   }
 }
  
+// function ogreMove(ogre) {
+//   let diffX = hero.x - ogre.x
+//   let diffY = hero.y - ogre.y
+//   let speed = 2.5
+
+//   if(diffX > 0) {
+//     ogre.x += speed
+//   } else {
+//     ogre.x -= speed
+//   }
+
+//   if (diffY > 0) {
+//     ogre.y += speed
+//   } else {
+//     ogre.y -= speed
+//   }
+// }
+
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
-  let speed = 3
+  console.log(diffX)
+  console.log(diffY)
+  let speed = 4
 
-  if(diffX > 0) {
+  if (diffX > 0 && diffX < 125) {
     ogre.x += speed
-  } else {
+  } else if (diffX < 0 && diffX > -125) {
     ogre.x -= speed
   }
 
-  if (diffY > 0) {
+  if (diffY > 0 && diffY < 125) {
     ogre.y += speed
-  } else {
+  } else if (diffY < 0 && diffY > -125) {
     ogre.y -= speed
   }
 }
@@ -186,11 +211,10 @@ function gameLoop() {
   }
   move()
   for (j = 0; j < walls.length; j++) {
-    detectWalls(walls[j])
+    detectWalls(hero, walls[j])
   }
   attack()
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  
   for (i = 0; i < ogres.length; i++) {
     if (ogres[i].alive) {
       ogreMove(ogres[i])
@@ -201,8 +225,87 @@ function gameLoop() {
   hero.render()
 }
 
+// function gameLoop() {
+//   ctx.clearRect(0, 0, canvas.width, canvas.height)
+//   drawWalls()
+//   frameCount++
+//   if (frameCount % 100 === 0) {
+//     createOgres()
+//   }
+//   move()
+//   attack()
+//   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  
+//   for (j = 0; j < walls.length; j++) {
+//     detectWalls(hero, walls[j])
+//     for (i = 0; i < ogres.length; i++) {
+//       ogreDetectWalls(ogres[i], walls[j])
+//       if (ogres[i].alive) {
+//         console.log(ogres[i].facing)
+//         ogreMove(ogres[i])
+//         detectHit(ogres[i])
+//         ogres[i].render()
+//       }
+//     }
+//   }
+//   hero.render()
+// }
+
 
 // DEFECTIVES
+
+// SPEEDS UP OGRES. ONLY PREVENTS VERTICAL WALL PHASING, NOT HORIZONTAL
+// function ogreDetectWalls(ogre, wall) {
+//   let speed = 3
+//   let diffX = hero.x - ogre.x
+//   let diffY = hero.y - ogre.y
+//     if (
+//       ogre.x + ogre.width >= wall.x &&
+//       ogre.x <= wall.x + wall.width &&
+//       ogre.y <= wall.y + wall.height &&
+//       ogre.y + ogre.height >= wall.y
+//       ) { 
+//           if (diffY < 0 && ogre.y <= wall.y + wall.height) {
+//             ogre.y += speed
+//           } else if (diffY > 0 && ogre.y + ogre.height >= wall.y) { 
+//             ogre.y -= speed
+//           } else if (diffX < 0 && ogre.x <= wall.x + wall.width) {
+//             ogre.x += speed
+//           } else if (diffX > 0 && ogre.x + ogre.width >= wall.x) {
+//             ogre.x -= speed
+//           }
+//         }
+// }
+
+// DOESN'T PREVENT OGRES FROM GOING THROUGH WALLS. MAKES THEM FASTER INSTEAD. SHIIII-
+// function gameLoop() {
+//   ctx.clearRect(0, 0, canvas.width, canvas.height)
+//   drawWalls()
+//   frameCount++
+//   if (frameCount % 100 === 0) {
+//     createOgres()
+//   }
+//   move()
+//   // for (j = 0; j < walls.length; j++) {
+//   //   detectWalls(walls[j])
+//   // }
+//   attack()
+//   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  
+//   for (j = 0; j < walls.length; j++) {
+//     detectWalls(walls[j])
+//     for (i = 0; i < ogres.length; i++) {
+//       if (ogres[i].alive) {
+//         ogreDetectWalls(ogres[i], walls[j])
+//         console.log(ogres[i].facing)
+//         ogreMove(ogres[i])
+//         detectHit(ogres[i])
+//         ogres[i].render()
+//       }
+//     }
+//   }
+//   hero.render()
+// }
 
 // LOWERED SPEED. UNEXPECTED 'QUICKSAND' EFFECT.
 // function detectWalls(wall) {
