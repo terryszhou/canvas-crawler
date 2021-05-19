@@ -1,7 +1,7 @@
 console.log("Hello")
 
 const movementDisplay = document.getElementById("movement")
-const gameStatus = document.getElementById("top-left")
+const gameStatus = document.getElementById("status")
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext('2d')
 
@@ -50,8 +50,79 @@ walls.push({
     y: 160,
     width: 120,
     height: 20
+  },
+  {
+    x: 440,
+    y: 60,
+    width: 20,
+    height: 100
+  },
+  {
+    x: 540,
+    y: 0,
+    width: 20,
+    height: 140
+  },
+  {
+    x: 500,
+    y: 140,
+    width: 60,
+    height: 20
+  },
+  {
+    x: 500,
+    y: 160,
+    width: 20,
+    height: 100
+  },
+  {
+    x: 700,
+    y: 0,
+    width: 20,
+    height: 80
+  },
+  {
+    x: 500,
+    y: 300,
+    width: 20,
+    height: 110
+  },
+  {
+    x: 440,
+    y: 300,
+    width: 180,
+    height: 20
+  },
+  {
+    x: 600,
+    y: 240,
+    width: 20,
+    height: 80
+  },
+  {
+    x: 700,
+    y: 160,
+    width: 100,
+    height: 20
+  },
+  {
+    x: 600,
+    y: 220,
+    width: 60,
+    height: 20
+  },
+  {
+    x: 380,
+    y: 60,
+    width: 60,
+    height: 20
+  },
+  {
+    x: 190,
+    y: 300,
+    width: 20,
+    height: 40
   }
-
 )
 
 // Iterates walls array and draws elements.
@@ -62,7 +133,7 @@ function drawWalls() {
   }
 }
 
-// Constructor class used for player and enemies.
+// Constructor class used for creating player, enemies and interactables.
 class Crawler{
     constructor(x, y, color, width, height, facing) {
       this.x = x
@@ -79,7 +150,6 @@ class Crawler{
     }
 }
 
-// Generates enemy into an array at random coordinates.
 let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
 let hero = new Crawler(100, 200, "hotpink", 20, 20)
 let exit = new Crawler(200, 25, "white", 30, 30)
@@ -197,7 +267,7 @@ function detectHit(ogre) {
     ) {
       hero.alive = false
       clearInterval(runGame)
-      movementDisplay.innerText = "YOU WERE KILLED BY THE OGRE!"
+      gameStatus.innerText = "YOU WERE KILLED BY THE OGRE!"
     }
 }
 
@@ -221,6 +291,7 @@ function getKey() {
     hero.y <= key.y + key.height &&
     hero.y + hero.height >= key.y
     ) {
+      gameStatus.innerText = "YOU GOT THE KEY!"
       key.alive = false
       hero.color = "gold"
     }
@@ -245,6 +316,10 @@ function winGame() {
         } else if (hero.facing == "east" && hero.x + hero.width >= exit.x) {
           hero.x -= speed
         }
+        exit.color = "crimson"
+        gameStatus.innerText = "YOU NEED THE KEY!"
+      } else {
+        exit.color = "white"
       }
       if (hero.color == "gold") {
         hero.alive = false
@@ -274,22 +349,28 @@ function gameLoop() {
   }
   // Displays player coordinates in top-right.
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  // Summons ogre array, moves them, detects player collision, and renders.
+  // Invokes enemy array.
   for (i = 0; i < ogres.length; i++) {
+  // Moves enemies.
     ogreMove(ogres[i])
+  // Checks if enemies have collided with player.
     detectHit(ogres[i])
-    // detectOgreCollide(ogres[i], ogres[i+1])
+  // Renders enemies.
     ogres[i].render()
   }
+  // Checks to see if the player has 'killed' the key.
   getKey()
+  // Checks to see if player has won the game upon reaching the exit.
   winGame()
-  // Renders player.
+  // Renders player if alive state is true.
   if (hero.alive) {
     hero.render()
   }
+  // Renders key if alive state is true.
   if (key.alive) {
     key.render()
   }
+  // Renders exit.
   exit.render()
 }
 
