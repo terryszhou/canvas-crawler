@@ -9,8 +9,10 @@ canvas.setAttribute("height", getComputedStyle(canvas)["height"])
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 
 let frameCount = 0
-let score = 0
+let seconds = 12
+let runCountDown = setInterval(countDown, 1000)
 let runGame = setInterval(gameLoop, 60)
+let countDisplay = document.getElementById("countdown")
 
 var walls = []
 
@@ -128,6 +130,12 @@ walls.push({
     y: 280,
     width: 60,
     height: 20
+  },
+  {
+    x: 300,
+    y: 340,
+    width: 80,
+    height: 20
   }
 )
 
@@ -157,20 +165,21 @@ class Crawler{
 }
 
 let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+let ogres2 = ogres
 let quicksands = [
-  new Crawler(720, 60, "brown", 80, 20),
-  new Crawler(680, 260, "brown", 60, 60),
-  new Crawler(160, 150, "brown", 100, 80),
-  new Crawler(170, 300, "brown", 20, 60),
-  new Crawler(170, 340, "brown", 60, 20),
-  new Crawler(210, 300, "brown", 20, 60),
-  // new Crawler(0, 80, "brown", 60, 20),
-  new Crawler(460, 140, "brown", 40, 20),
-  new Crawler(600, 30, "brown", 40, 80),
-  new Crawler(500, 360, "brown", 20, 60),
-  new Crawler(0, 260, "brown", 40, 40),
-  new Crawler(20, 180, "brown", 40, 40),
-  new Crawler(0, 100, "brown", 40, 40)
+  new Crawler(720, 60, "saddlebrown", 80, 20),
+  new Crawler(690, 260, "saddlebrown", 50, 60),
+  new Crawler(160, 150, "saddlebrown", 100, 80),
+  new Crawler(170, 300, "saddlebrown", 20, 60),
+  new Crawler(170, 340, "saddlebrown", 60, 20),
+  new Crawler(210, 300, "saddlebrown", 20, 60),
+  // new Crawler(0, 80, "saddlebrown", 60, 20),
+  new Crawler(460, 140, "saddlebrown", 40, 20),
+  new Crawler(600, 30, "saddlebrown", 40, 80),
+  new Crawler(500, 360, "saddlebrown", 20, 60),
+  new Crawler(0, 260, "saddlebrown", 30, 40),
+  new Crawler(30, 180, "saddlebrown", 30, 40),
+  new Crawler(0, 100, "saddlebrown", 30, 40)
 ]
 let hero = new Crawler(100, 200, "hotpink", 20, 20)
 let exit = new Crawler(200, 25, "white", 30, 30)
@@ -254,44 +263,60 @@ function createOgres() {
   }
 }
 
+// Spawns key at new random, non-wall location
+function respawnKey(wall) {
+  if (
+    key.x + key.width >= wall.x &&
+    key.x <= wall.x + wall.width &&
+    key.y >= key.y + wall.height &&
+    key.y + key.height <= wall.y
+    ) { 
+      key.x = 760
+      key.y = 20
+    } else {      
+      key.x = Math.random() * canvas.width
+      key.y = Math.random() * canvas.height
+    }
+}
+
 // Allows enemies to chase player within a range, move randomly when out of range, and turn red when chasing player.
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
-  let speed = 3
-  let randomNum = Math.floor((Math.random()*2)*(Math.random() < 0.5 ? -1 : 1))
+  let speed = 0
+  let randomNum = Math.floor((Math.random()*3)*(Math.random() < 0.5 ? -1 : 1))
 
-  if (diffX > 0 && diffX < 125 && ogre.x + ogre.width < canvas.width) {
+  if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
-  } else if (diffX > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
+  } else if (diffX > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
   }
   
-  if (diffX < 0 && diffX > -125 && ogre.x > 0) {
+  if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
-  } else if (diffX < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
+  } else if (diffX < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
   }
 
-  if (diffY > 0 && diffY < 125 && ogre.y + ogre.height < canvas.height) {
+  if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
-  } else if (diffY > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
+  } else if (diffY > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
   }
   
-  if (diffY < 0 && diffY > -125 && ogre.y > 0) {
+  if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
-  } else if (diffY < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
+  } else if (diffY < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
@@ -312,18 +337,6 @@ function detectHit(ogre) {
     }
 }
 
-// Detects if enemies have collided.
-// function detectOgreCollide(ogre1, ogre2) {
-//   if (
-//     ogre1.x + ogre1.width >= ogre2.x &&
-//     ogre1.x <= ogre2.x + ogre2.width &&
-//     ogre1.y <= ogre2.y + ogre2.height &&
-//     ogre1.y + ogre1.height >= ogre2.y
-//     ) {
-//       console.log("Collision!")
-//     }
-// }
-
 // Detects if player has 'collided' with key.
 function getKey() {
   if (
@@ -333,6 +346,7 @@ function getKey() {
     hero.y + hero.height >= key.y
     ) {
       gameStatus.innerText = "YOU GOT THE KEY!"
+      countDisplay.innerText = "!!"
       key.alive = false
       hero.color = "gold"
     }
@@ -370,6 +384,18 @@ function winGame() {
     }
 }
 
+// Runs key countdown timer, displays in bottom-left.
+function countDown() {
+  seconds--
+  if (key.alive) {
+  if (seconds == 0) {
+    seconds = 12
+  }
+  countDisplay.innerText = seconds
+  } else {
+    countDisplay.innerText = "!!"
+  }
+}
 
 // Loops game cycle.
 function gameLoop() {
@@ -379,6 +405,7 @@ function gameLoop() {
   drawWalls()
   // Increases frame count, spawns ogres every 100 frames
   frameCount++
+  console.log(frameCount)
   if (frameCount % 100 === 0) {
     createOgres()
   }
@@ -387,9 +414,18 @@ function gameLoop() {
   // Player wall detection. May roll into playerUpdate() later.
   for (j = 0; j < walls.length; j++) {
     detectWalls(hero, walls[j])
+    if (frameCount % 200 === 0) {
+      respawnKey(walls[j])
+    }
+  }
+  for (k = 0; k < quicksands.length; k++) {
+    quicksands[k].render()
+    detectQuickSands(hero, quicksands[k])
   }
   // Displays player coordinates in top-right.
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  // Renders exit.
+  exit.render()
   // Invokes enemy array.
   for (i = 0; i < ogres.length; i++) {
   // Moves enemies.
@@ -397,12 +433,7 @@ function gameLoop() {
   // Checks if enemies have collided with player.
     detectHit(ogres[i])
   // Renders enemies.
-    ogres[i].render()
-  }
-
-  for (k = 0; k < quicksands.length; k++) {
-    quicksands[k].render()
-    detectQuickSands(hero, quicksands[k])
+      ogres[i].render()
   }
 
   // Checks to see if the player has 'killed' the key.
@@ -417,8 +448,6 @@ function gameLoop() {
   if (key.alive) {
     key.render()
   }
-  // Renders exit.
-  exit.render()
 }
 
 // function gameLoop() {
@@ -449,6 +478,41 @@ function gameLoop() {
 
 
 // DEFECTIVES
+
+// DOESN'T TRIGGER
+// function detectOgreCollide(ogre1, ogre2) {
+//   let speed = 6
+//   if (
+//     ogre1.x + ogre1.width >= ogre2.x &&
+//     ogre1.x <= ogre2.x + ogre2.width &&
+//     ogre1.y <= ogre2.y + ogre2.height &&
+//     ogre1.y + ogre1.height >= ogre2.y
+//     ) {
+//       if (ogre1.facing == "north" && ogre1.y <= ogre2.y + ogre2.height) {
+//         ogre1.y += speed
+//         ogre2.y -= speed
+//       } else if (ogre1.facing == "south" && ogre1.y + ogre2.height >= ogre2.y) { 
+//         ogre1.y -= speed
+//         ogre2.y += speed
+//       } 
+//     }
+// }
+
+// CONSTANTLY TRIGGERS
+// function detectOgreCollide(ogre1, ogre2) {
+//   if (
+//     ogre1.x + ogre1.width >= ogre2.x &&
+//     ogre1.x <= ogre2.x + ogre2.width &&
+//     ogre1.y <= ogre2.y + ogre2.height &&
+//     ogre1.y + ogre1.height >= ogre2.y
+//     ) {
+//       console.log("Hit!")
+//     }
+// }
+
+// for (l = 0; l < ogres2.length; l++) {
+//   detectOgreCollide(ogres[i], ogres2[l])
+// }
 
 // RECESSIVE FEATURE
 // function attack() {
