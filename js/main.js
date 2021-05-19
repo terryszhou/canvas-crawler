@@ -1,6 +1,7 @@
 console.log("Hello")
 
 const movementDisplay = document.getElementById("movement")
+const gameStatus = document.getElementById("top-left")
 const canvas = document.getElementById("canvas")
 const ctx = canvas.getContext('2d')
 
@@ -13,11 +14,12 @@ let runGame = setInterval(gameLoop, 60)
 
 var walls = []
 
+// Adds walls to array.
 walls.push({
     x: 240,
-    y: 40,
+    y: 0,
     width: 20,
-    height: 60
+    height: 100
   },
   {
     x: 60,
@@ -33,7 +35,7 @@ walls.push({
   },
   {
     x: 60,
-    y: 300,
+    y: 280,
     width: 300,
     height: 20
   },
@@ -52,6 +54,7 @@ walls.push({
 
 )
 
+// Iterates walls array and draws elements.
 function drawWalls() {
   ctx.fillStyle = 'grey'
   for(i = 0; i < walls.length; i++){
@@ -59,6 +62,7 @@ function drawWalls() {
   }
 }
 
+// Constructor class used for player and enemies.
 class Crawler{
     constructor(x, y, color, width, height, facing) {
       this.x = x
@@ -75,10 +79,13 @@ class Crawler{
     }
 }
 
+// Generates enemy into an array at random coordinates.
 let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
-let hero = new Crawler(100, 200, "hotpink", 20, 20, null)
-// let bullet = new Crawler(hero.x, hero.y, 'purple', 2, 2)
+let hero = new Crawler(100, 200, "hotpink", 20, 20)
+let exit = new Crawler(200, 25, "white", 30, 30)
+let key = new Crawler(760, 20, "gold", 10, 10)
 
+// Adds keyboard event listeners for up- and downstrokes.
 let keys = []
 window.addEventListener("keydown", function (e) {
   keys[e.keyCode] = true
@@ -87,6 +94,7 @@ window.addEventListener("keyup", function (e) {
   keys[e.keyCode] = false
 })
 
+// Translates keyboard input into movement and establishes player direction.
 function move() {
   const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
@@ -104,6 +112,7 @@ function move() {
   }
 }
 
+// Uses player direction to detect collision between player and walls.
 function detectWalls(hero, wall) {
   let speed = 8
     if (
@@ -124,6 +133,7 @@ function detectWalls(hero, wall) {
         }
 }
       
+// Creates enemies and adds them to array, up to a maximum of four.
 function createOgres() {
   if (ogres.length < 4) {
     ogres.push(new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
@@ -133,14 +143,7 @@ function createOgres() {
   }
 }
 
-function attack() {
-  if(keys[32]) {
-    hero.color = "blue"
-  } else {
-    hero.color = "hotpink"
-  }
-}
-
+// Allows enemies to chase player within a range, move randomly when out of range, and turn red when chasing player.
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
@@ -149,33 +152,42 @@ function ogreMove(ogre) {
 
   if (diffX > 0 && diffX < 125 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
+    ogre.color = "red"
   } else if (diffX > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
+    ogre.color = "#bada55"
   }
   
   if (diffX < 0 && diffX > -125 && ogre.x > 0) {
     ogre.x -= speed
+    ogre.color = "red"
   } else if (diffX < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
+    ogre.color = "#bada55"
   }
 
   if (diffY > 0 && diffY < 125 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
+    ogre.color = "red"
   } else if (diffY > 125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
+    ogre.color = "#bada55"
   }
   
   if (diffY < 0 && diffY > -125 && ogre.y > 0) {
     ogre.y -= speed
+    ogre.color = "red"
   } else if (diffY < -125 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
+    ogre.color = "#bada55"
   }
 }
 
+// Detects if player and enemy have collided. If so, triggers Game Over.
 function detectHit(ogre) {
   if (
     hero.x + hero.width >= ogre.x &&
@@ -183,43 +195,102 @@ function detectHit(ogre) {
     hero.y <= ogre.y + ogre.height &&
     hero.y + hero.height >= ogre.y
     ) {
-      endGame(ogre)
+      hero.alive = false
+      clearInterval(runGame)
+      movementDisplay.innerText = "YOU WERE KILLED BY THE OGRE!"
     }
 }
 
-function endGame(ogre) {
-  if(keys[32]) {
-  ogre.alive = false
-  clearInterval(runGame)
-  movementDisplay.innerText = "YOU WIN!"
-  } else {
-  hero.alive = false
-  clearInterval(runGame)
-  movementDisplay.innerText = "YOU WERE KILLED BY THE OGRE!"
-  }
+// Detects if enemies have collided.
+// function detectOgreCollide(ogre1, ogre2) {
+//   if (
+//     ogre1.x + ogre1.width >= ogre2.x &&
+//     ogre1.x <= ogre2.x + ogre2.width &&
+//     ogre1.y <= ogre2.y + ogre2.height &&
+//     ogre1.y + ogre1.height >= ogre2.y
+//     ) {
+//       console.log("Collision!")
+//     }
+// }
+
+// Detects if player has 'collided' with key.
+function getKey() {
+  if (
+    hero.x + hero.width >= key.x &&
+    hero.x <= key.x + key.width &&
+    hero.y <= key.y + key.height &&
+    hero.y + hero.height >= key.y
+    ) {
+      key.alive = false
+      hero.color = "gold"
+    }
 }
 
+// Establishes Win Game state.
+function winGame() {
+  let speed = 8
+  if (
+    hero.x + hero.width >= exit.x &&
+    hero.x <= exit.x + exit.width &&
+    hero.y <= exit.y + exit.height &&
+    hero.y + hero.height >= exit.y
+    ) {
+      if (hero.color == "hotpink") {
+        if (hero.facing == "north" && hero.y <= exit.y + exit.height) {
+          hero.y += speed
+        } else if (hero.facing == "south" && hero.y + hero.height >= exit.y) { 
+          hero.y -= speed
+        } else if (hero.facing == "west" && hero.x <= exit.x + exit.width) {
+          hero.x += speed
+        } else if (hero.facing == "east" && hero.x + hero.width >= exit.x) {
+          hero.x -= speed
+        }
+      }
+      if (hero.color == "gold") {
+        hero.alive = false
+        clearInterval(runGame)
+        gameStatus.innerText = "WIN! YOU ESCAPED!"
+      }
+    }
+}
+
+
+// Loops game cycle.
 function gameLoop() {
+  // Clears game field.
   ctx.clearRect(0, 0, canvas.width, canvas.height)
+  // Draws walls.
   drawWalls()
+  // Increases frame count, spawns ogres every 100 frames
   frameCount++
   if (frameCount % 100 === 0) {
     createOgres()
   }
+  // Player movement. May roll into playerUpdate() later.
   move()
+  // Player wall detection. May roll into playerUpdate() later.
   for (j = 0; j < walls.length; j++) {
     detectWalls(hero, walls[j])
   }
-  attack()
+  // Displays player coordinates in top-right.
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  // Summons ogre array, moves them, detects player collision, and renders.
   for (i = 0; i < ogres.length; i++) {
-    if (ogres[i].alive) {
-      ogreMove(ogres[i])
-      detectHit(ogres[i])
-      ogres[i].render()
-    }
+    ogreMove(ogres[i])
+    detectHit(ogres[i])
+    // detectOgreCollide(ogres[i], ogres[i+1])
+    ogres[i].render()
   }
-  hero.render()
+  getKey()
+  winGame()
+  // Renders player.
+  if (hero.alive) {
+    hero.render()
+  }
+  if (key.alive) {
+    key.render()
+  }
+  exit.render()
 }
 
 // function gameLoop() {
@@ -250,6 +321,15 @@ function gameLoop() {
 
 
 // DEFECTIVES
+
+// RECESSIVE FEATURE
+// function attack() {
+//   if(keys[32]) {
+//     hero.color = "blue"
+//   } else {
+//     hero.color = "hotpink"
+//   }
+// }
 
 // SPEEDS UP OGRES. ONLY PREVENTS VERTICAL WALL PHASING, NOT HORIZONTAL
 // function ogreDetectWalls(ogre, wall) {
