@@ -85,7 +85,7 @@ walls.push({
     x: 500,
     y: 300,
     width: 20,
-    height: 110
+    height: 60
   },
   {
     x: 440,
@@ -122,6 +122,12 @@ walls.push({
     y: 300,
     width: 20,
     height: 40
+  },
+  {
+    x: 740,
+    y: 280,
+    width: 60,
+    height: 20
   }
 )
 
@@ -151,6 +157,21 @@ class Crawler{
 }
 
 let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+let quicksands = [
+  new Crawler(720, 60, "brown", 80, 20),
+  new Crawler(680, 260, "brown", 60, 60),
+  new Crawler(160, 150, "brown", 100, 80),
+  new Crawler(170, 300, "brown", 20, 60),
+  new Crawler(170, 340, "brown", 60, 20),
+  new Crawler(210, 300, "brown", 20, 60),
+  // new Crawler(0, 80, "brown", 60, 20),
+  new Crawler(460, 140, "brown", 40, 20),
+  new Crawler(600, 30, "brown", 40, 80),
+  new Crawler(500, 360, "brown", 20, 60),
+  new Crawler(0, 260, "brown", 40, 40),
+  new Crawler(20, 180, "brown", 40, 40),
+  new Crawler(0, 100, "brown", 40, 40)
+]
 let hero = new Crawler(100, 200, "hotpink", 20, 20)
 let exit = new Crawler(200, 25, "white", 30, 30)
 let key = new Crawler(760, 20, "gold", 10, 10)
@@ -202,7 +223,27 @@ function detectWalls(hero, wall) {
           }
         }
 }
-      
+
+function detectQuickSands(hero, quicksand) {
+  let speed = 4
+    if (
+      hero.x + hero.width >= quicksand.x &&
+      hero.x <= quicksand.x + quicksand.width &&
+      hero.y <= quicksand.y + quicksand.height &&
+      hero.y + hero.height >= quicksand.y
+      ) { 
+          if (hero.facing == "north" && hero.y <= quicksand.y + quicksand.height) {
+            hero.y += speed
+          } else if (hero.facing == "south" && hero.y + hero.height >= quicksand.y) { 
+            hero.y -= speed
+          } else if (hero.facing == "west" && hero.x <= quicksand.x + quicksand.width) {
+            hero.x += speed
+          } else if (hero.facing == "east" && hero.x + hero.width >= quicksand.x) {
+            hero.x -= speed
+          }
+        } 
+}
+
 // Creates enemies and adds them to array, up to a maximum of four.
 function createOgres() {
   if (ogres.length < 4) {
@@ -358,6 +399,12 @@ function gameLoop() {
   // Renders enemies.
     ogres[i].render()
   }
+
+  for (k = 0; k < quicksands.length; k++) {
+    quicksands[k].render()
+    detectQuickSands(hero, quicksands[k])
+  }
+
   // Checks to see if the player has 'killed' the key.
   getKey()
   // Checks to see if player has won the game upon reaching the exit.
