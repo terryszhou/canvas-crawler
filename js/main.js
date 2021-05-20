@@ -147,6 +147,16 @@ function drawWalls() {
   }
 }
 
+// function drawWalls() {
+//   ctx.fillStyle = "grey"
+//   for(i = 0; i < walls.length; i++){
+//     render() {
+//       walls[i].img = walls[i].imgSrc
+//       ctx.drawImage(walls[i].img, walls[i].x, walls[i].y, walls[i].width, walls[i].height)
+//     }
+//   }
+// }
+
 // Constructor class used for creating player, enemies and interactables.
 class Crawler{
     constructor(imgSrc, x, y, color, width, height, facing) {
@@ -307,45 +317,45 @@ function ogreMove(ogre) {
   if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
-    // ogre.img = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblack.png"
   } else if (diffX > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
-    // ogre.img = "../img/ghostwhite.png"
+    ogre.imgSrc = "../img/ghostwhite.png"
   }
   
   if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
-    // ogre.img = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblack.png"
   } else if (diffX < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
-    // ogre.img = "../img/ghostwhite.png"
+    ogre.imgSrc = "../img/ghostwhite.png"
   }
 
   if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
-    // ogre.img = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblack.png"
   } else if (diffY > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
-    // ogre.img = "../img/ghostwhite.png"
+    ogre.imgSrc = "../img/ghostwhite.png"
   }
   
   if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
-    // ogre.img = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblack.png"
   } else if (diffY < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
-    // ogre.img = "../img/ghostwhite.png"
+    ogre.imgSrc = "../img/ghostwhite.png"
   }
 }
 
