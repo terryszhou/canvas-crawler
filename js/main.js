@@ -14,9 +14,6 @@ let runCountDown = setInterval(countDown, 1000)
 let runGame = setInterval(gameLoop, 60)
 let countDisplay = document.getElementById("countdown")
 
-var walltile = new Image()
-walltile.src = "../img/walltile.png"
-
 var walls = []
 
 // Adds walls to array.
@@ -144,24 +141,31 @@ walls.push({
 
 // Iterates walls array and draws elements.
 function drawWalls() {
-  ctx.fillStyle = "grey"
+  var walltile = new Image()
+  walltile.src = "../img/walltile.png"
   for(i = 0; i < walls.length; i++){
-    // ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
-    var pat = ctx.createPattern(walltile, "repeat")
-    ctx.fillStyle = pat
+    var walltilepat = ctx.createPattern(walltile, "repeat")
+    ctx.fillStyle = walltilepat
     ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
   }
 }
 
-// function drawWalls() {
-//   ctx.fillStyle = "grey"
-//   for(i = 0; i < walls.length; i++){
-//     render() {
-//       walls[i].img = walls[i].imgSrc
-//       ctx.drawImage(walls[i].img, walls[i].x, walls[i].y, walls[i].width, walls[i].height)
-//     }
-//   }
-// }
+class Sound {
+  constructor(audioSrc) {
+  this.sound = document.createElement("audio");
+  this.sound.src = audioSrc;
+  this.sound.setAttribute("preload", "auto");
+  this.sound.setAttribute("controls", "none");
+  this.sound.style.display = "none";
+  document.body.appendChild(this.sound);
+  }
+  play() {
+    this.sound.play();
+  }
+  stop() {
+    this.sound.pause();
+  }
+}
 
 // Constructor class used for creating player, enemies and interactables.
 class Crawler{
@@ -176,10 +180,7 @@ class Crawler{
       this.alive = true
       this.facing = null
     }
-    // render() {
-    //   ctx.fillStyle = this.color
-    //   ctx.fillRect(this.x, this.y, this.width, this.height)
-    // }
+
     render() {
       this.img.src = this.imgSrc
       ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
@@ -307,8 +308,8 @@ function createOgres() {
 
 // Spawns key at new random location
 function respawnLatchKey() {
-  latchkey.x = Math.random() * canvas.width
-  latchkey.y = Math.random() * canvas.height
+  latchkey.x = Math.random() * canvas.width - 10
+  latchkey.y = Math.random() * canvas.height - 10
 }
 
 function checkLatchKeyWall(latchkey, wall) {
@@ -331,7 +332,7 @@ function countDown() {
     }
     countDisplay.innerText = seconds
   } else {
-      countDisplay.innerText = "!!"
+      countDisplay.innerText = "KEY GET!!"
   }
 }
 
@@ -399,7 +400,7 @@ function detectHit(ogre) {
       // hero.imgSrc = "../img/catdead.png"
       clearInterval(runGame)
       clearInterval(runCountDown)
-      gameStatus.innerText = "YOU WERE KILLED BY THE OGRE!"
+      gameStatus.innerText = "YOU WERE KILLED BY GHOSTS!"
     }
 }
 
@@ -411,9 +412,15 @@ function getLatchKey() {
     hero.y <= latchkey.y + latchkey.height &&
     hero.y + hero.height >= latchkey.y
     ) {
+      let keyGet = new Sound("../audio/zapsplat_cartoon_musical_riff_cheeky_electric_piano_fast_ascend_66411.mp3")
+      keyGet.play()
       gameStatus.innerText = "YOU GOT THE KEY!"
-      countDisplay.innerText = "!!"
-      exit.imgSrc = "../img/dooropen.png"
+      countDisplay.innerText = "KEY GET!!"
+      if (frameCount % 2 == 0) {
+        exit.imgSrc = "../img/dooropen.png"
+      } else {
+        exit.imgSrc = "../img/dooropen2.png"
+      }
       latchkey.alive = false
       hero.color = "gold"
     }
@@ -461,7 +468,7 @@ function countDown() {
   }
   countDisplay.innerText = seconds
   } else {
-    countDisplay.innerText = "!!"
+    countDisplay.innerText = "KEY GET!!"
   }
 }
 
@@ -520,34 +527,24 @@ function gameLoop() {
   }
 }
 
-// function gameLoop() {
-//   ctx.clearRect(0, 0, canvas.width, canvas.height)
-//   drawWalls()
-//   frameCount++
-//   if (frameCount % 100 === 0) {
-//     createOgres()
-//   }
-//   move()
-//   attack()
-//   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  
-//   for (j = 0; j < walls.length; j++) {
-//     detectWalls(hero, walls[j])
-//     for (i = 0; i < ogres.length; i++) {
-//       ogreDetectWalls(ogres[i], walls[j])
-//       if (ogres[i].alive) {
-//         console.log(ogres[i].facing)
-//         ogreMove(ogres[i])
-//         detectHit(ogres[i])
-//         ogres[i].render()
-//       }
-//     }
-//   }
-//   hero.render()
-// }
-
-
 // DEFECTIVES
+
+// UNWANTED OBSTACLE CLASS. STILL USEFUL.
+// class Obstacle{
+//   constructor(x, y, width, height) {
+//     this.x = x
+//     this.y = y
+//     this.width = width
+//     this.height = height
+//   }
+//     render() {
+//       var ballpit = new Image()
+//       ballpit.src = "../img/ballpit.png"
+//       var ballpitpat = ctx.createPattern(ballpit, "repeat")
+//       ctx.fillStyle = ballpitpat
+//       ctx.fillRect(this.x, this.y, this.width, this.height)
+//     }
+// }
 
 // ATTEMPT TO PREVENT ENEMIES FROM TELEFRAGGING PLAYER
 // -- Reloaded ogre location every game cycle.
