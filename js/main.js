@@ -141,7 +141,7 @@ walls.push({
 
 // Iterates walls array and draws elements.
 function drawWalls() {
-  ctx.fillStyle = 'grey'
+  ctx.fillStyle = "grey"
   for(i = 0; i < walls.length; i++){
     ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
   }
@@ -149,7 +149,9 @@ function drawWalls() {
 
 // Constructor class used for creating player, enemies and interactables.
 class Crawler{
-    constructor(x, y, color, width, height, facing) {
+    constructor(imgSrc, x, y, color, width, height, facing) {
+      this.img = new Image()
+      this.imgSrc = imgSrc
       this.x = x
       this.y = y
       this.color = color
@@ -158,32 +160,34 @@ class Crawler{
       this.alive = true
       this.facing = null
     }
+    // render() {
+    //   ctx.fillStyle = this.color
+    //   ctx.fillRect(this.x, this.y, this.width, this.height)
+    // }
     render() {
-      ctx.fillStyle = this.color
-      ctx.fillRect(this.x, this.y, this.width, this.height)
+      this.img.src = this.imgSrc
+      ctx.drawImage(this.img, this.x, this.y, this.width, this.height)
     }
 }
 
-let ogres = [new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
-let ogres2 = ogres
+let ogres = [new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
 let quicksands = [
-  new Crawler(720, 60, "saddlebrown", 80, 20),
-  new Crawler(690, 260, "saddlebrown", 50, 60),
-  new Crawler(160, 150, "saddlebrown", 100, 80),
-  new Crawler(170, 300, "saddlebrown", 20, 60),
-  new Crawler(170, 340, "saddlebrown", 60, 20),
-  new Crawler(210, 300, "saddlebrown", 20, 60),
-  // new Crawler(0, 80, "saddlebrown", 60, 20),
-  new Crawler(460, 140, "saddlebrown", 40, 20),
-  new Crawler(600, 30, "saddlebrown", 40, 80),
-  new Crawler(500, 360, "saddlebrown", 20, 60),
-  new Crawler(0, 260, "saddlebrown", 30, 40),
-  new Crawler(30, 180, "saddlebrown", 30, 40),
-  new Crawler(0, 100, "saddlebrown", 30, 40)
+  new Crawler("../img/quicksandtile.png", 720, 60, "saddlebrown", 80, 20),
+  new Crawler("../img/quicksandtile.png", 690, 260, "saddlebrown", 50, 60),
+  new Crawler("../img/quicksandtile.png", 160, 150, "saddlebrown", 100, 80),
+  new Crawler("../img/quicksandtile.png", 170, 300, "saddlebrown", 20, 40),
+  new Crawler("../img/quicksandtile.png", 190, 340, "saddlebrown", 20, 20),
+  new Crawler("../img/quicksandtile.png", 210, 300, "saddlebrown", 20, 40),
+  new Crawler("../img/quicksandtile.png", 460, 140, "saddlebrown", 40, 20),
+  new Crawler("../img/quicksandtile.png", 600, 30, "saddlebrown", 40, 80),
+  new Crawler("../img/quicksandtile.png", 500, 360, "saddlebrown", 20, 60),
+  new Crawler("../img/quicksandtile.png", 0, 260, "saddlebrown", 30, 40),
+  new Crawler("../img/quicksandtile.png", 30, 180, "saddlebrown", 30, 40),
+  new Crawler("../img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
 ]
-let hero = new Crawler(100, 200, "hotpink", 20, 20)
-let exit = new Crawler(200, 25, "white", 30, 30)
-let key = new Crawler(760, 20, "gold", 10, 10)
+let hero = new Crawler("../img/cat.png", 100, 200, "hotpink", 20, 20)
+let exit = new Crawler("../img/doorlocked.png", 190, 15, "white", 50, 50)
+let latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
 
 // Adds keyboard event listeners for up- and downstrokes.
 let keys = []
@@ -256,70 +260,92 @@ function detectQuickSands(hero, quicksand) {
 // Creates enemies and adds them to array, up to a maximum of four.
 function createOgres() {
   if (ogres.length < 4) {
-    ogres.push(new Crawler(Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
+    ogres.push(new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
     ogres.forEach(ogre => {
       ogre.render()
     })
   }
 }
 
-// Spawns key at new random, non-wall location
-function respawnKey(wall) {
+// Spawns key at new random location
+function respawnLatchKey() {
+  latchkey.x = Math.random() * canvas.width
+  latchkey.y = Math.random() * canvas.height
+}
+
+function checkLatchKeyWall(latchkey, wall) {
   if (
-    key.x + key.width >= wall.x &&
-    key.x <= wall.x + wall.width &&
-    key.y >= key.y + wall.height &&
-    key.y + key.height <= wall.y
-    ) { 
-      key.x = 760
-      key.y = 20
-    } else {      
-      key.x = Math.random() * canvas.width
-      key.y = Math.random() * canvas.height
+    latchkey.x + latchkey.width >= wall.x &&
+    latchkey.x <= wall.x + wall.width &&
+    latchkey.y <= wall.y + wall.height &&
+    latchkey.y + latchkey.height >= wall.y
+    ) {
+      latchkey.x = 760
+      latchkey.y = 20
+    } 
+}
+
+function countDown() {
+  seconds--
+  if (latchkey.alive) {
+    if (seconds == 0) {
+      seconds = 12
     }
+    countDisplay.innerText = seconds
+  } else {
+      countDisplay.innerText = "!!"
+  }
 }
 
 // Allows enemies to chase player within a range, move randomly when out of range, and turn red when chasing player.
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
-  let speed = 0
+  let speed = 3
   let randomNum = Math.floor((Math.random()*3)*(Math.random() < 0.5 ? -1 : 1))
 
   if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
+    // ogre.img = "../img/ghostblack.png"
   } else if (diffX > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
+    // ogre.img = "../img/ghostwhite.png"
   }
   
   if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
+    // ogre.img = "../img/ghostblack.png"
   } else if (diffX < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
+    // ogre.img = "../img/ghostwhite.png"
   }
 
   if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
+    // ogre.img = "../img/ghostblack.png"
   } else if (diffY > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
+    // ogre.img = "../img/ghostwhite.png"
   }
   
   if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
+    // ogre.img = "../img/ghostblack.png"
   } else if (diffY < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
+    // ogre.img = "../img/ghostwhite.png"
   }
 }
 
@@ -333,21 +359,22 @@ function detectHit(ogre) {
     ) {
       hero.alive = false
       clearInterval(runGame)
+      clearInterval(runCountDown)
       gameStatus.innerText = "YOU WERE KILLED BY THE OGRE!"
     }
 }
 
-// Detects if player has 'collided' with key.
-function getKey() {
+// Detects if player has 'collided' with latchkey.
+function getLatchKey() {
   if (
-    hero.x + hero.width >= key.x &&
-    hero.x <= key.x + key.width &&
-    hero.y <= key.y + key.height &&
-    hero.y + hero.height >= key.y
+    hero.x + hero.width >= latchkey.x &&
+    hero.x <= latchkey.x + latchkey.width &&
+    hero.y <= latchkey.y + latchkey.height &&
+    hero.y + hero.height >= latchkey.y
     ) {
       gameStatus.innerText = "YOU GOT THE KEY!"
       countDisplay.innerText = "!!"
-      key.alive = false
+      latchkey.alive = false
       hero.color = "gold"
     }
 }
@@ -379,6 +406,7 @@ function winGame() {
       if (hero.color == "gold") {
         hero.alive = false
         clearInterval(runGame)
+        clearInterval(runCountDown)
         gameStatus.innerText = "WIN! YOU ESCAPED!"
       }
     }
@@ -387,7 +415,7 @@ function winGame() {
 // Runs key countdown timer, displays in bottom-left.
 function countDown() {
   seconds--
-  if (key.alive) {
+  if (latchkey.alive) {
   if (seconds == 0) {
     seconds = 12
   }
@@ -405,7 +433,7 @@ function gameLoop() {
   drawWalls()
   // Increases frame count, spawns ogres every 100 frames
   frameCount++
-  console.log(frameCount)
+  // console.log(frameCount)
   if (frameCount % 100 === 0) {
     createOgres()
   }
@@ -414,9 +442,11 @@ function gameLoop() {
   // Player wall detection. May roll into playerUpdate() later.
   for (j = 0; j < walls.length; j++) {
     detectWalls(hero, walls[j])
+
     if (frameCount % 200 === 0) {
-      respawnKey(walls[j])
+      respawnLatchKey()
     }
+    checkLatchKeyWall(latchkey, walls[j])
   }
   for (k = 0; k < quicksands.length; k++) {
     quicksands[k].render()
@@ -437,7 +467,7 @@ function gameLoop() {
   }
 
   // Checks to see if the player has 'killed' the key.
-  getKey()
+  getLatchKey()
   // Checks to see if player has won the game upon reaching the exit.
   winGame()
   // Renders player if alive state is true.
@@ -445,8 +475,8 @@ function gameLoop() {
     hero.render()
   }
   // Renders key if alive state is true.
-  if (key.alive) {
-    key.render()
+  if (latchkey.alive) {
+    latchkey.render()
   }
 }
 
@@ -478,6 +508,23 @@ function gameLoop() {
 
 
 // DEFECTIVES
+
+// ATTEMPT TO PREVENT ENEMIES FROM TELEFRAGGING PLAYER
+// -- Reloaded ogre location every game cycle.
+// function detectOgreWallPhase(ogre) {
+//   if (
+//     ogre.x + ogre.width >= hero.x &&
+//     ogre.x <= hero.x + hero.width &&
+//     ogre.y <= hero.y + hero.height &&
+//     ogre.y + ogre.height >= hero.y
+//     ) {
+//       ogre.x = 400
+//       ogre.y = 100
+//     } else {
+//       ogre.x = Math.random() * canvas.width
+//       ogre.y = Math.random() * canvas.height
+//     }
+// }
 
 // DOESN'T TRIGGER
 // function detectOgreCollide(ogre1, ogre2) {
