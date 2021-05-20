@@ -195,7 +195,7 @@ let quicksands = [
   new Crawler("../img/quicksandtile.png", 30, 180, "saddlebrown", 30, 40),
   new Crawler("../img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
 ]
-let hero = new Crawler("../img/cat.png", 100, 200, "hotpink", 20, 20)
+let hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
 let exit = new Crawler("../img/doorlocked.png", 190, 15, "white", 50, 50)
 let latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
 
@@ -214,15 +214,37 @@ function move() {
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
     hero.facing = "north"
+      if (frameCount % 2 == 0) {
+        hero.imgSrc = "../img/catnorth1.png"
+      } else {
+        hero.imgSrc = "../img/catnorth2.png"
+      }
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
     hero.facing = "south"
+      if (frameCount % 2 == 0) {
+        hero.imgSrc = "../img/catsouth1.png"
+      } else {
+        hero.imgSrc = "../img/catsouth2.png"
+      }
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
     hero.facing = "west"
+      if (frameCount % 2 == 0) {
+        hero.imgSrc = "../img/catwest1.png"
+      } else {
+        hero.imgSrc = "../img/catwest2.png"
+      }
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
     hero.x += speed
     hero.facing = "east"
+      if (frameCount % 2 == 0) {
+        hero.imgSrc = "../img/cateast1.png"
+      } else {
+        hero.imgSrc = "../img/cateast2.png"
+      }
+  } else {
+    hero.imgSrc = "../img/catneutral.png"
   }
 }
 
@@ -317,7 +339,7 @@ function ogreMove(ogre) {
   if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblackeast.png"
   } else if (diffX > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
@@ -328,7 +350,7 @@ function ogreMove(ogre) {
   if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblackwest.png"
   } else if (diffX < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
@@ -339,7 +361,7 @@ function ogreMove(ogre) {
   if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblacksouth.png"
   } else if (diffY > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
@@ -350,7 +372,7 @@ function ogreMove(ogre) {
   if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblack.png"
+    ogre.imgSrc = "../img/ghostblacknorth.png"
   } else if (diffY < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
@@ -368,6 +390,7 @@ function detectHit(ogre) {
     hero.y + hero.height >= ogre.y
     ) {
       hero.alive = false
+      // hero.imgSrc = "../img/catdead.png"
       clearInterval(runGame)
       clearInterval(runCountDown)
       gameStatus.innerText = "YOU WERE KILLED BY THE OGRE!"
@@ -384,6 +407,7 @@ function getLatchKey() {
     ) {
       gameStatus.innerText = "YOU GOT THE KEY!"
       countDisplay.innerText = "!!"
+      exit.imgSrc = "../img/dooropen.png"
       latchkey.alive = false
       hero.color = "gold"
     }
