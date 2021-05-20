@@ -14,6 +14,9 @@ let runCountDown = setInterval(countDown, 1000)
 let runGame = setInterval(gameLoop, 60)
 let countDisplay = document.getElementById("countdown")
 
+var walltile = new Image()
+walltile.src = "../img/walltile.png"
+
 var walls = []
 
 // Adds walls to array.
@@ -143,6 +146,9 @@ walls.push({
 function drawWalls() {
   ctx.fillStyle = "grey"
   for(i = 0; i < walls.length; i++){
+    // ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
+    var pat = ctx.createPattern(walltile, "repeat")
+    ctx.fillStyle = pat
     ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
   }
 }
