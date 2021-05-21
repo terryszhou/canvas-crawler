@@ -196,9 +196,9 @@ let quicksands = [
   new Crawler("img/quicksandtile.png", 30, 180, "saddlebrown", 30, 40),
   new Crawler("img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
 ]
-let hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
-let exit = new Crawler("../img/doorlocked.png", 180, 5, "white", 60, 60)
-let latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
+let hero = new Crawler("img/catneutral.png", 100, 200, "hotpink", 20, 20)
+let exit = new Crawler("img/doorlocked.png", 180, 5, "white", 60, 60)
+let latchkey = new Crawler("img/782285-middle.png", 760, 20, "gold", 20, 20)
 
 let keys = []
 window.addEventListener("keydown", function (e) {
@@ -210,7 +210,7 @@ window.addEventListener("keyup", function (e) {
 
 function drawWalls() {
   var walltile = new Image()
-  walltile.src = "../img/walltile.png"
+  walltile.src = "img/walltile.png"
   for(i = 0; i < walls.length; i++){
     var walltilepat = ctx.createPattern(walltile, "repeat")
     ctx.fillStyle = walltilepat
@@ -225,47 +225,47 @@ function move() {
     hero.y -= speed
     hero.facing = "north"
       if (frameCount % 2 == 0) {
-        hero.imgSrc = "../img/catnorth1.png"
-        // hero.imgSrc = "../img/hoodkidup1.png"
+        hero.imgSrc = "img/catnorth1.png"
+        // hero.imgSrc = "img/hoodkidup1.png"
       } else {
-        hero.imgSrc = "../img/catnorth2.png"
-        // hero.imgSrc = "../img/hoodkidup2.png"
+        hero.imgSrc = "img/catnorth2.png"
+        // hero.imgSrc = "img/hoodkidup2.png"
       }
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
     hero.facing = "south"
       if (frameCount % 2 == 0) {
-        hero.imgSrc = "../img/catsouth1.png"
-        // hero.imgSrc = "../img/hoodkiddown1.png"
+        hero.imgSrc = "img/catsouth1.png"
+        // hero.imgSrc = "img/hoodkiddown1.png"
       } else {
-        hero.imgSrc = "../img/catsouth2.png"
-        // hero.imgSrc = "../img/hoodkiddown2.png"
+        hero.imgSrc = "img/catsouth2.png"
+        // hero.imgSrc = "img/hoodkiddown2.png"
       }
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
     hero.facing = "west"
       if (frameCount % 2 == 0) {
-        hero.imgSrc = "../img/catwest1.png"
-        // hero.imgSrc = "../img/hoodkidleft1.png"
+        hero.imgSrc = "img/catwest1.png"
+        // hero.imgSrc = "img/hoodkidleft1.png"
       } else {
-        hero.imgSrc = "../img/catwest2.png"
-        // hero.imgSrc = "../img/hoodkidleft2.png"
+        hero.imgSrc = "img/catwest2.png"
+        // hero.imgSrc = "img/hoodkidleft2.png"
 
       }
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
     hero.x += speed
     hero.facing = "east"
       if (frameCount % 2 == 0) {
-        hero.imgSrc = "../img/cateast1.png"
-        // hero.imgSrc = "../img/hoodkidright1.png"
+        hero.imgSrc = "img/cateast1.png"
+        // hero.imgSrc = "img/hoodkidright1.png"
       } else {
-        hero.imgSrc = "../img/cateast2.png"
-        // hero.imgSrc = "../img/hoodkidright2.png"
+        hero.imgSrc = "img/cateast2.png"
+        // hero.imgSrc = "img/hoodkidright2.png"
 
       }
   } else {
-    hero.imgSrc = "../img/catneutral.png"
-    // hero.imgSrc = "../img/hoodkidneutral.png"
+    hero.imgSrc = "img/catneutral.png"
+    // hero.imgSrc = "img/hoodkidneutral.png"
   }
 }
 
@@ -312,9 +312,9 @@ function detectQuickSands(hero, quicksand) {
 // ENEMY FUNCTIONS
 function createOgres() {
   if (ogres.length < 4) {
-    let apparition = new Sound("../audio/zapsplat_horror_ghost_evp_eerie_male_lo_fi_glitchy_vocalisation_breathy_001_58828.mp3")
+    let apparition = new Sound("audio/zapsplat_horror_ghost_evp_eerie_male_lo_fi_glitchy_vocalisation_breathy_001_58828.mp3")
     apparition.play()
-    ogres.push(new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
+    ogres.push(new Crawler("img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
     ogres.forEach(ogre => {
       ogre.render()
     })
@@ -329,42 +329,42 @@ function ogreMove(ogre) {
   if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblackeast.png"
+    ogre.imgSrc = "img/ghostblackeast.png"
   } else if (diffX > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
-    ogre.imgSrc = "../img/ghostwhite.png"
+    ogre.imgSrc = "img/ghostwhite.png"
   }
   if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblackwest.png"
+    ogre.imgSrc = "img/ghostblackwest.png"
   } else if (diffX < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
-    ogre.imgSrc = "../img/ghostwhite.png"
+    ogre.imgSrc = "img/ghostwhite.png"
   }
   if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblacksouth.png"
+    ogre.imgSrc = "img/ghostblacksouth.png"
   } else if (diffY > 120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x += randomNum
     ogre.y += randomNum
     ogre.color = "#bada55"
-    ogre.imgSrc = "../img/ghostwhite.png"
+    ogre.imgSrc = "img/ghostwhite.png"
   }
   if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
-    ogre.imgSrc = "../img/ghostblacknorth.png"
+    ogre.imgSrc = "img/ghostblacknorth.png"
   } else if (diffY < -120 && ogre.x + ogre.width < canvas.width && ogre.x > 0 && ogre.y > 0 && ogre.y + ogre.height < canvas.height) {
     ogre.x -= randomNum
     ogre.y -= randomNum
     ogre.color = "#bada55"
-    ogre.imgSrc = "../img/ghostwhite.png"
+    ogre.imgSrc = "img/ghostwhite.png"
   }
 }
 
@@ -376,7 +376,7 @@ function detectHit(ogre) {
     hero.y + hero.height >= ogre.y
     ) {
       hero.alive = false
-      // hero.imgSrc = "../img/catdead.png"
+      // hero.imgSrc = "img/catdead.png"
       clearInterval(runGame)
       clearInterval(runCountDown)
       gameStatus.innerText = "DEAD!"
@@ -430,11 +430,11 @@ function getLatchKey() {
       gameStatus.innerText = "GOT KEY!"
       countDisplay.innerText = "KEY GET!!"
       if (frameCount % 2 == 0) {
-        exit.imgSrc = "../img/dooropen.png"
+        exit.imgSrc = "img/dooropen.png"
       } else {
-        exit.imgSrc = "../img/dooropen2.png"
+        exit.imgSrc = "img/dooropen2.png"
       }
-      let keyGet = new Sound("../audio/zapsplat_bells_small_hand_bell_ring_in_water_weird_cartoon_tone_001_61906.mp3")
+      let keyGet = new Sound("audio/zapsplat_bells_small_hand_bell_ring_in_water_weird_cartoon_tone_001_61906.mp3")
       keyGet.play()
       hero.color = "gold"
       latchkey.alive = false
@@ -472,7 +472,7 @@ function winGame() {
         ctx.font = "80px 'Press Start 2P', monospace"
         ctx.fillStyle = "hotpink"
         ctx.fillText("¡WAOW!", 170, 245)
-        let waow = new Sound("../audio/anime-wow-sound-effect.mp3")
+        let waow = new Sound("audio/anime-wow-sound-effect.mp3")
         waow.play()
       }
     }
@@ -484,11 +484,11 @@ titleInit()
 meowBtn.addEventListener("click", () => {
   let meowArray = 
   [
-    new Sound("../audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
-    new Sound("../audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
-    new Sound("../audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
-    new Sound("../audio/animals_cat_meow_002.mp3"),
-    new Sound("../audio/zapsplat_animals_dog_puppy_several_weeks_old_single_bark_ridgeback_cross_bullmastiff_010_56165.mp3")
+    new Sound("audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
+    new Sound("audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
+    new Sound("audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
+    new Sound("audio/animals_cat_meow_002.mp3"),
+    new Sound("audio/zapsplat_animals_dog_puppy_several_weeks_old_single_bark_ridgeback_cross_bullmastiff_010_56165.mp3")
   ]
   let index = Math.floor(Math.random() * 1000) % meowArray.length
   meowArray[index].play()
@@ -522,7 +522,7 @@ function titleInit() {
 }
 
 playgameBtn.addEventListener("click", () => {
-  let ninthLife = new Sound("../audio/noisecreations_SFX-NCFREE02_MoaningCat.mp3")
+  let ninthLife = new Sound("audio/noisecreations_SFX-NCFREE02_MoaningCat.mp3")
   ninthLife.play()
   titleMusic.stop()
   frameCount = 0
@@ -532,10 +532,10 @@ playgameBtn.addEventListener("click", () => {
   titlescreenBtn.innerText = "TITLE SCREEN"
   gameStatus.innerText = "ESCAPE!"
   countDisplay.innerText = 12
-  ogres = [new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
-  hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
-  exit = new Crawler("../img/doorlocked.png", 180, 5, "white", 60, 60)
-  latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
+  ogres = [new Crawler("img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+  hero = new Crawler("img/catneutral.png", 100, 200, "hotpink", 20, 20)
+  exit = new Crawler("img/doorlocked.png", 180, 5, "white", 60, 60)
+  latchkey = new Crawler("img/782285-middle.png", 760, 20, "gold", 20, 20)
   clearInterval(runGame)
   clearInterval(runCountDown)
   gameInit()
