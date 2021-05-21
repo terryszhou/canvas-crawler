@@ -14,7 +14,6 @@ let seconds = 12
 let runGame
 let runCountDown
 let countDisplay = document.getElementById("countdown")
-// let resetBtn = document.getElementById("resetgame")
 let titlescreenBtn = document.getElementById("titlescreen")
 let playgameBtn = document.getElementById("playgame")
 let meowBtn = document.getElementById("meow")
@@ -221,7 +220,7 @@ function drawWalls() {
 
 // PLAYER FUNCTIONS
 function move() {
-  const speed = 8
+  const speed = 16
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
     hero.facing = "north"
@@ -463,12 +462,16 @@ function winGame() {
         clearInterval(runGame)
         clearInterval(runCountDown)
         gameStatus.innerText = "WIN!!"
+        ctx.font = "80px 'Press Start 2P', monospace"
+        ctx.fillStyle = "hotpink"
+        ctx.fillText("¡WAOW!", 170, 245)
+        let waow = new Sound("../audio/anime-wow-sound-effect.mp3")
+        waow.play()
       }
     }
 }
 
 // BUTTON FUNCTIONS
-
 titleInit()
 
 meowBtn.addEventListener("click", () => {
@@ -499,9 +502,10 @@ function titleInit() {
   ctx.font = "20px 'Press Start 2P', monospace"
   ctx.fillStyle = "goldenrod"
   ctx.fillText("Help Dungeon-Cat escape!", 180, 250)
-  ctx.font = "20px 'Press Start 2P', monospace"
-  ctx.fillStyle = "goldenrod"
   ctx.fillText("Avoid ghosts!", 280, 300)
+  ctx.font = "15px 'Press Start 2P', monospace"
+  ctx.fillStyle = "goldenrod"
+  ctx.fillText("WASD or Arrow Keys", 265, 390)
   titlescreenBtn.innerText = ""
   gameStatus.innerText = ""
   playgameBtn.innerText = "PLAY GAME!"
