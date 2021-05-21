@@ -220,7 +220,7 @@ function drawWalls() {
 
 // PLAYER FUNCTIONS
 function move() {
-  const speed = 16
+  const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
     hero.y -= speed
     hero.facing = "north"
