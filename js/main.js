@@ -160,7 +160,7 @@ class Sound {
   }
 }
 
-let titleMusic = new Sound("../audio/Origami Repetika - Kind Gentle Beautiful Person.mp3")
+let titleMusic = new Sound("audio/Origami Repetika - Kind Gentle Beautiful Person.mp3")
 
 class Crawler{
     constructor(imgSrc, x, y, color, width, height, facing) {
@@ -181,20 +181,20 @@ class Crawler{
     }
 }
 
-let ogres = [new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+let ogres = [new Crawler("img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
 let quicksands = [
-  new Crawler("../img/quicksandtile.png", 720, 60, "saddlebrown", 80, 20),
-  new Crawler("../img/quicksandtile.png", 690, 260, "saddlebrown", 50, 60),
-  new Crawler("../img/quicksandtile.png", 160, 150, "saddlebrown", 100, 80),
-  new Crawler("../img/quicksandtile.png", 170, 300, "saddlebrown", 20, 40),
-  new Crawler("../img/quicksandtile.png", 190, 340, "saddlebrown", 20, 20),
-  new Crawler("../img/quicksandtile.png", 210, 300, "saddlebrown", 20, 40),
-  new Crawler("../img/quicksandtile.png", 460, 140, "saddlebrown", 40, 20),
-  new Crawler("../img/quicksandtile.png", 600, 30, "saddlebrown", 40, 80),
-  new Crawler("../img/quicksandtile.png", 500, 360, "saddlebrown", 20, 60),
-  new Crawler("../img/quicksandtile.png", 0, 260, "saddlebrown", 30, 40),
-  new Crawler("../img/quicksandtile.png", 30, 180, "saddlebrown", 30, 40),
-  new Crawler("../img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
+  new Crawler("img/quicksandtile.png", 720, 60, "saddlebrown", 80, 20),
+  new Crawler("img/quicksandtile.png", 690, 260, "saddlebrown", 50, 60),
+  new Crawler("img/quicksandtile.png", 160, 150, "saddlebrown", 100, 80),
+  new Crawler("img/quicksandtile.png", 170, 300, "saddlebrown", 20, 40),
+  new Crawler("img/quicksandtile.png", 190, 340, "saddlebrown", 20, 20),
+  new Crawler("img/quicksandtile.png", 210, 300, "saddlebrown", 20, 40),
+  new Crawler("img/quicksandtile.png", 460, 140, "saddlebrown", 40, 20),
+  new Crawler("img/quicksandtile.png", 600, 30, "saddlebrown", 40, 80),
+  new Crawler("img/quicksandtile.png", 500, 360, "saddlebrown", 20, 60),
+  new Crawler("img/quicksandtile.png", 0, 260, "saddlebrown", 30, 40),
+  new Crawler("img/quicksandtile.png", 30, 180, "saddlebrown", 30, 40),
+  new Crawler("img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
 ]
 let hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
 let exit = new Crawler("../img/doorlocked.png", 180, 5, "white", 60, 60)
@@ -383,7 +383,7 @@ function detectHit(ogre) {
     }
 }
 
-// LATCHKEY FUNCTIONS
+// LATCHKEY FUNCTIONS 
 function respawnLatchKey() {
   latchkey.x = Math.random() * canvas.width - 10
   latchkey.y = Math.random() * canvas.height - 10
@@ -403,13 +403,20 @@ function checkLatchKeyWall(latchkey, wall) {
 
 function countDown() {
   seconds--
+  if (seconds <= 3) {
+    countDisplay.style.color = "crimson"
+  } else {
+    countDisplay.style.color = "goldenrod"
+  }
   if (latchkey.alive) {
     if (seconds == 0) {
       seconds = 12
+    countDisplay.style.color = "goldenrod"
     }
     countDisplay.innerText = seconds
   } else {
       countDisplay.innerText = "KEY GET!!"
+    countDisplay.style.color = "goldenrod"
   }
 }
 
