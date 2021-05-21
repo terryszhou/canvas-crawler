@@ -79,11 +79,11 @@ main {
   /* background-color: #222; */
 }
 
-#titlescreen:hover, #resetgame:hover {
+#meow:hover, #titlescreen:hover, #resetgame:hover {
   color: crimson;
   transition-duration: 0.3s;
 }
 
-#titlescreen:active, #resetgame:active {
+#meow:active, #titlescreen:active, #resetgame:active {
   font-size:20px;
 }

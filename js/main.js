@@ -15,6 +15,7 @@ let runGame
 let runCountDown
 let countDisplay = document.getElementById("countdown")
 let resetBtn = document.getElementById("resetgame")
+let meowBtn = document.getElementById("meow")
 
 var walls = []
 
@@ -469,12 +470,29 @@ function winGame() {
 
 // GAME PROCESS FUNCTIONS
 
+meowBtn.addEventListener("click", () => {
+  let meowArray = 
+  [
+    new Sound("../audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
+    new Sound("../audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
+    new Sound("../audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
+    new Sound("../audio/animals_cat_meow_002.mp3")
+  ]
+  // for (m = 0; m < meowArray.length; m++) {
+  //   meowArray[i].play()
+  // }
+  let index = Math.floor(Math.random() * 1000) % meowArray.length
+  meowArray[index].play()
+})
+
 function gameInit() {
   runGame = setInterval(gameLoop, 60)
   runCountDown = setInterval(countDown, 1000)
 }
 
 resetBtn.addEventListener("click", () => {
+  let ninthLife = new Sound("../audio/noisecreations_SFX-NCFREE02_MoaningCat.mp3")
+  ninthLife.play()
   frameCount = 0
   seconds = 12
   gameStatus.innerText = "ESCAPE THE DUNGEON!"
@@ -524,7 +542,7 @@ function gameLoop() {
     }
     checkLatchKeyWall(latchkey, walls[j])
   }
-  movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  // movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
 
   // ENEMY FUNCTIONS
   if (frameCount % 100 === 0) {
