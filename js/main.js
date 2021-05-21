@@ -8,15 +8,15 @@ const ctx = canvas.getContext('2d')
 canvas.setAttribute("height", getComputedStyle(canvas)["height"])
 canvas.setAttribute("width", getComputedStyle(canvas)["width"])
 
+// VARIABLES AND CONSTRUCTORS
 let frameCount = 0
 let seconds = 12
-let runCountDown = setInterval(countDown, 1000)
-let runGame = setInterval(gameLoop, 60)
+let runGame
+let runCountDown
 let countDisplay = document.getElementById("countdown")
 
 var walls = []
 
-// Adds walls to array.
 walls.push({
     x: 240,
     y: 0,
@@ -139,17 +139,6 @@ walls.push({
   }
 )
 
-// Iterates walls array and draws elements.
-function drawWalls() {
-  var walltile = new Image()
-  walltile.src = "../img/walltile.png"
-  for(i = 0; i < walls.length; i++){
-    var walltilepat = ctx.createPattern(walltile, "repeat")
-    ctx.fillStyle = walltilepat
-    ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
-  }
-}
-
 class Sound {
   constructor(audioSrc) {
   this.sound = document.createElement("audio");
@@ -157,6 +146,7 @@ class Sound {
   this.sound.setAttribute("preload", "auto");
   this.sound.setAttribute("controls", "none");
   this.sound.style.display = "none";
+  this.sound.volume = 0.25
   document.body.appendChild(this.sound);
   }
   play() {
@@ -167,7 +157,6 @@ class Sound {
   }
 }
 
-// Constructor class used for creating player, enemies and interactables.
 class Crawler{
     constructor(imgSrc, x, y, color, width, height, facing) {
       this.img = new Image()
@@ -203,10 +192,9 @@ let quicksands = [
   new Crawler("../img/quicksandtile.png", 0, 100, "saddlebrown", 30, 40)
 ]
 let hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
-let exit = new Crawler("../img/doorlocked.png", 190, 15, "white", 50, 50)
+let exit = new Crawler("../img/doorlocked.png", 180, 5, "white", 60, 60)
 let latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
 
-// Adds keyboard event listeners for up- and downstrokes.
 let keys = []
 window.addEventListener("keydown", function (e) {
   keys[e.keyCode] = true
@@ -215,7 +203,17 @@ window.addEventListener("keyup", function (e) {
   keys[e.keyCode] = false
 })
 
-// Translates keyboard input into movement and establishes player direction.
+function drawWalls() {
+  var walltile = new Image()
+  walltile.src = "../img/walltile.png"
+  for(i = 0; i < walls.length; i++){
+    var walltilepat = ctx.createPattern(walltile, "repeat")
+    ctx.fillStyle = walltilepat
+    ctx.fillRect(walls[i].x, walls[i].y, walls[i].width, walls[i].height)
+  }
+}
+
+// PLAYER FUNCTIONS
 function move() {
   const speed = 8
   if((keys[38] || keys[87]) && hero.y > 0) {
@@ -223,41 +221,51 @@ function move() {
     hero.facing = "north"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "../img/catnorth1.png"
+        // hero.imgSrc = "../img/hoodkidup1.png"
       } else {
         hero.imgSrc = "../img/catnorth2.png"
+        // hero.imgSrc = "../img/hoodkidup2.png"
       }
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
     hero.facing = "south"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "../img/catsouth1.png"
+        // hero.imgSrc = "../img/hoodkiddown1.png"
       } else {
         hero.imgSrc = "../img/catsouth2.png"
+        // hero.imgSrc = "../img/hoodkiddown2.png"
       }
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
     hero.facing = "west"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "../img/catwest1.png"
+        // hero.imgSrc = "../img/hoodkidleft1.png"
       } else {
         hero.imgSrc = "../img/catwest2.png"
+        // hero.imgSrc = "../img/hoodkidleft2.png"
+
       }
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
     hero.x += speed
     hero.facing = "east"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "../img/cateast1.png"
+        // hero.imgSrc = "../img/hoodkidright1.png"
       } else {
         hero.imgSrc = "../img/cateast2.png"
+        // hero.imgSrc = "../img/hoodkidright2.png"
+
       }
   } else {
     hero.imgSrc = "../img/catneutral.png"
+    // hero.imgSrc = "../img/hoodkidneutral.png"
   }
 }
 
-// Uses player direction to detect collision between player and walls.
 function detectWalls(hero, wall) {
-  let speed = 8
+  let speed = 9
     if (
       hero.x + hero.width >= wall.x &&
       hero.x <= wall.x + wall.width &&
@@ -296,9 +304,11 @@ function detectQuickSands(hero, quicksand) {
         } 
 }
 
-// Creates enemies and adds them to array, up to a maximum of four.
+// ENEMY FUNCTIONS
 function createOgres() {
   if (ogres.length < 4) {
+    let apparition = new Sound("../audio/zapsplat_horror_ghost_evp_eerie_male_lo_fi_glitchy_vocalisation_breathy_001_58828.mp3")
+    apparition.play()
     ogres.push(new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20))
     ogres.forEach(ogre => {
       ogre.render()
@@ -306,37 +316,6 @@ function createOgres() {
   }
 }
 
-// Spawns key at new random location
-function respawnLatchKey() {
-  latchkey.x = Math.random() * canvas.width - 10
-  latchkey.y = Math.random() * canvas.height - 10
-}
-
-function checkLatchKeyWall(latchkey, wall) {
-  if (
-    latchkey.x + latchkey.width >= wall.x &&
-    latchkey.x <= wall.x + wall.width &&
-    latchkey.y <= wall.y + wall.height &&
-    latchkey.y + latchkey.height >= wall.y
-    ) {
-      latchkey.x = 760
-      latchkey.y = 20
-    } 
-}
-
-function countDown() {
-  seconds--
-  if (latchkey.alive) {
-    if (seconds == 0) {
-      seconds = 12
-    }
-    countDisplay.innerText = seconds
-  } else {
-      countDisplay.innerText = "KEY GET!!"
-  }
-}
-
-// Allows enemies to chase player within a range, move randomly when out of range, and turn red when chasing player.
 function ogreMove(ogre) {
   let diffX = hero.x - ogre.x
   let diffY = hero.y - ogre.y
@@ -388,7 +367,6 @@ function ogreMove(ogre) {
   }
 }
 
-// Detects if player and enemy have collided. If so, triggers Game Over.
 function detectHit(ogre) {
   if (
     hero.x + hero.width >= ogre.x &&
@@ -404,7 +382,36 @@ function detectHit(ogre) {
     }
 }
 
-// Detects if player has 'collided' with latchkey.
+// LATCHKEY FUNCTIONS
+function respawnLatchKey() {
+  latchkey.x = Math.random() * canvas.width - 10
+  latchkey.y = Math.random() * canvas.height - 10
+}
+
+function checkLatchKeyWall(latchkey, wall) {
+  if (
+    latchkey.x + latchkey.width >= wall.x &&
+    latchkey.x <= wall.x + wall.width &&
+    latchkey.y <= wall.y + wall.height &&
+    latchkey.y + latchkey.height >= wall.y
+    ) {
+      latchkey.x = 760
+      latchkey.y = 20
+    } 
+}
+
+function countDown() {
+  seconds--
+  if (latchkey.alive) {
+    if (seconds == 0) {
+      seconds = 12
+    }
+    countDisplay.innerText = seconds
+  } else {
+      countDisplay.innerText = "KEY GET!!"
+  }
+}
+
 function getLatchKey() {
   if (
     hero.x + hero.width >= latchkey.x &&
@@ -412,8 +419,6 @@ function getLatchKey() {
     hero.y <= latchkey.y + latchkey.height &&
     hero.y + hero.height >= latchkey.y
     ) {
-      let keyGet = new Sound("../audio/zapsplat_cartoon_musical_riff_cheeky_electric_piano_fast_ascend_66411.mp3")
-      keyGet.play()
       gameStatus.innerText = "YOU GOT THE KEY!"
       countDisplay.innerText = "KEY GET!!"
       if (frameCount % 2 == 0) {
@@ -421,12 +426,14 @@ function getLatchKey() {
       } else {
         exit.imgSrc = "../img/dooropen2.png"
       }
-      latchkey.alive = false
+      let keyGet = new Sound("../audio/zapsplat_bells_small_hand_bell_ring_in_water_weird_cartoon_tone_001_61906.mp3")
+      keyGet.play()
       hero.color = "gold"
+      latchkey.alive = false
+
     }
 }
 
-// Establishes Win Game state.
 function winGame() {
   let speed = 8
   if (
@@ -459,7 +466,15 @@ function winGame() {
     }
 }
 
-// Runs key countdown timer, displays in bottom-left.
+// GAME PROCESS FUNCTIONS
+
+function gameInit() {
+  runGame = setInterval(gameLoop, 60)
+  runCountDown = setInterval(countDown, 1000)
+}
+
+gameInit()
+
 function countDown() {
   seconds--
   if (latchkey.alive) {
@@ -472,21 +487,20 @@ function countDown() {
   }
 }
 
-// Loops game cycle.
 function gameLoop() {
-  // Clears game field.
   ctx.clearRect(0, 0, canvas.width, canvas.height)
-  // Draws walls.
   drawWalls()
-  // Increases frame count, spawns ogres every 100 frames
   frameCount++
-  // console.log(frameCount)
-  if (frameCount % 100 === 0) {
-    createOgres()
+  exit.render()
+  for (k = 0; k < quicksands.length; k++) {
+    quicksands[k].render()
+    detectQuickSands(hero, quicksands[k])
   }
-  // Player movement. May roll into playerUpdate() later.
+
+  // PLAYER FUNCTIONS
   move()
-  // Player wall detection. May roll into playerUpdate() later.
+  getLatchKey()
+  winGame()
   for (j = 0; j < walls.length; j++) {
     detectWalls(hero, walls[j])
 
@@ -495,38 +509,26 @@ function gameLoop() {
     }
     checkLatchKeyWall(latchkey, walls[j])
   }
-  for (k = 0; k < quicksands.length; k++) {
-    quicksands[k].render()
-    detectQuickSands(hero, quicksands[k])
-  }
-  // Displays player coordinates in top-right.
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  // Renders exit.
-  exit.render()
-  // Invokes enemy array.
+
+  // ENEMY FUNCTIONS
+  if (frameCount % 100 === 0) {
+    createOgres()
+  }
   for (i = 0; i < ogres.length; i++) {
-  // Moves enemies.
     ogreMove(ogres[i])
-  // Checks if enemies have collided with player.
     detectHit(ogres[i])
-  // Renders enemies.
       ogres[i].render()
   }
 
-  // Checks to see if the player has 'killed' the key.
-  getLatchKey()
-  // Checks to see if player has won the game upon reaching the exit.
-  winGame()
-  // Renders player if alive state is true.
+  // RENDERING FUNCTIONS
   if (hero.alive) {
     hero.render()
   }
-  // Renders key if alive state is true.
   if (latchkey.alive) {
     latchkey.render()
   }
 }
-
 // DEFECTIVES
 
 // UNWANTED OBSTACLE CLASS. STILL USEFUL.

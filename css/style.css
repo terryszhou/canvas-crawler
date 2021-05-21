@@ -20,7 +20,7 @@ h1, h2 {
 
 canvas {
   /* background-image: url('../img/stone.png'); */
-  background-image: url("../img/floortile.jpg");
+  background-image: url("../img/floortile.png");
   /* background-repeat: repeat; */
   background-color: #222;
   width: 100%;
