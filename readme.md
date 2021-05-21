@@ -1,5 +1,7 @@
 # Project 1: Hoodkid
 
+**NOTE!! This project changed a great deal between conception and the final product. This Readme will be updated to reflect these changes at a later date in time.**
+
 Whiteboard at: https://miro.com/app/board/o9J_lEOTGaE=/
 
 "Hoodkid" is a 2D top-down hack 'n' slash inspired by roguelike dungeon crawlers. The player will control the eponymous Hoodkid and guide him from his starting position to the dungeon's exit. Hoodkid is controlled using the arrow keys or WASD, and has a single attack: a short-range sword slash controlled by the space bar. Hoodkid will have to find the Key to escape the dungeon, but will be confronted with enemies whose sole purpose is to prevent his escape. 
