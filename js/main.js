@@ -14,7 +14,9 @@ let seconds = 12
 let runGame
 let runCountDown
 let countDisplay = document.getElementById("countdown")
-let resetBtn = document.getElementById("resetgame")
+// let resetBtn = document.getElementById("resetgame")
+let titlescreenBtn = document.getElementById("titlescreen")
+let playgameBtn = document.getElementById("playgame")
 let meowBtn = document.getElementById("meow")
 
 var walls = []
@@ -158,6 +160,8 @@ class Sound {
     this.sound.pause();
   }
 }
+
+let titleMusic = new Sound("../audio/Origami Repetika - Kind Gentle Beautiful Person.mp3")
 
 class Crawler{
     constructor(imgSrc, x, y, color, width, height, facing) {
@@ -380,7 +384,7 @@ function detectHit(ogre) {
       // hero.imgSrc = "../img/catdead.png"
       clearInterval(runGame)
       clearInterval(runCountDown)
-      gameStatus.innerText = "YOU WERE KILLED BY GHOSTS!"
+      gameStatus.innerText = "DEAD!"
     }
 }
 
@@ -421,7 +425,7 @@ function getLatchKey() {
     hero.y <= latchkey.y + latchkey.height &&
     hero.y + hero.height >= latchkey.y
     ) {
-      gameStatus.innerText = "YOU GOT THE KEY!"
+      gameStatus.innerText = "GOT KEY!"
       countDisplay.innerText = "KEY GET!!"
       if (frameCount % 2 == 0) {
         exit.imgSrc = "../img/dooropen.png"
@@ -455,7 +459,7 @@ function winGame() {
           hero.x -= speed
         }
         exit.color = "crimson"
-        gameStatus.innerText = "YOU NEED THE KEY!"
+        gameStatus.innerText = "GET KEY!"
       } else {
         exit.color = "white"
       }
@@ -463,12 +467,14 @@ function winGame() {
         hero.alive = false
         clearInterval(runGame)
         clearInterval(runCountDown)
-        gameStatus.innerText = "WIN! YOU ESCAPED!"
+        gameStatus.innerText = "WIN!!"
       }
     }
 }
 
 // GAME PROCESS FUNCTIONS
+
+titleInit()
 
 meowBtn.addEventListener("click", () => {
   let meowArray = 
@@ -476,26 +482,46 @@ meowBtn.addEventListener("click", () => {
     new Sound("../audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
     new Sound("../audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
     new Sound("../audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
-    new Sound("../audio/animals_cat_meow_002.mp3")
+    new Sound("../audio/animals_cat_meow_002.mp3"),
+    new Sound("../audio/zapsplat_animals_dog_puppy_several_weeks_old_single_bark_ridgeback_cross_bullmastiff_010_56165.mp3")
   ]
-  // for (m = 0; m < meowArray.length; m++) {
-  //   meowArray[i].play()
-  // }
   let index = Math.floor(Math.random() * 1000) % meowArray.length
   meowArray[index].play()
 })
+
+titlescreenBtn.addEventListener("click", () => {
+  clearInterval(runGame)
+  clearInterval(runCountDown)
+  ctx.clearRect(0, 0, canvas.width, canvas.height)
+  titleInit()
+})
+
+function titleInit() {
+  titleMusic.play()
+  ctx.font = "90px Fantasy"
+  ctx.fillStyle = "goldenrod"
+  ctx.fillText("CAT CRAWLER", 75, 200)
+  titlescreenBtn.innerText = ""
+  gameStatus.innerText = ""
+  countDisplay.innerText = ""
+  movementDisplay.innerText = ""
+  meowBtn.innerText = ""
+}
 
 function gameInit() {
   runGame = setInterval(gameLoop, 60)
   runCountDown = setInterval(countDown, 1000)
 }
 
-resetBtn.addEventListener("click", () => {
+playgameBtn.addEventListener("click", () => {
   let ninthLife = new Sound("../audio/noisecreations_SFX-NCFREE02_MoaningCat.mp3")
   ninthLife.play()
+  titleMusic.stop()
   frameCount = 0
   seconds = 12
-  gameStatus.innerText = "ESCAPE THE DUNGEON!"
+  meowBtn.innerText = "MEOW!"
+  titlescreenBtn.innerText = "TITLE SCREEN"
+  gameStatus.innerText = "ESCAPE!"
   countDisplay.innerText = 12
   ogres = [new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
   hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
@@ -505,8 +531,6 @@ resetBtn.addEventListener("click", () => {
   clearInterval(runCountDown)
   gameInit()
 })
-
-gameInit()
 
 function countDown() {
   seconds--
@@ -542,7 +566,7 @@ function gameLoop() {
     }
     checkLatchKeyWall(latchkey, walls[j])
   }
-  // movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
+  movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
 
   // ENEMY FUNCTIONS
   if (frameCount % 100 === 0) {
@@ -563,6 +587,23 @@ function gameLoop() {
   }
 }
 // DEFECTIVES
+
+// DEPRECATED FEATURE. FULLY FUNCTIONAL.
+// meowBtn.addEventListener("click", () => {
+//   let meowArray = 
+//   [
+//     new Sound("../audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
+//     new Sound("../audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
+//     new Sound("../audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
+//     new Sound("../audio/animals_cat_meow_002.mp3"),
+//     new Sound("../audio/zapsplat_animals_dog_puppy_several_weeks_old_single_bark_ridgeback_cross_bullmastiff_010_56165.mp3")
+//   ]
+//   // for (m = 0; m < meowArray.length; m++) {
+//   //   meowArray[i].play()
+//   // }
+//   let index = Math.floor(Math.random() * 1000) % meowArray.length
+//   meowArray[index].play()
+// })
 
 // UNWANTED OBSTACLE CLASS. STILL USEFUL.
 // class Obstacle{
