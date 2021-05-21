@@ -498,19 +498,21 @@ titlescreenBtn.addEventListener("click", () => {
 
 function titleInit() {
   titleMusic.play()
-  ctx.font = "90px Fantasy"
+  ctx.font = "60px 'Press Start 2P', monospace"
   ctx.fillStyle = "goldenrod"
   ctx.fillText("CAT CRAWLER", 75, 200)
+  ctx.font = "20px 'Press Start 2P', monospace"
+  ctx.fillStyle = "goldenrod"
+  ctx.fillText("Help Dungeon-Cat escape!", 180, 250)
+  ctx.font = "20px 'Press Start 2P', monospace"
+  ctx.fillStyle = "goldenrod"
+  ctx.fillText("Avoid ghosts!", 280, 300)
   titlescreenBtn.innerText = ""
   gameStatus.innerText = ""
+  playgameBtn.innerText = "PLAY GAME!"
   countDisplay.innerText = ""
   movementDisplay.innerText = ""
   meowBtn.innerText = ""
-}
-
-function gameInit() {
-  runGame = setInterval(gameLoop, 60)
-  runCountDown = setInterval(countDown, 1000)
 }
 
 playgameBtn.addEventListener("click", () => {
@@ -519,6 +521,7 @@ playgameBtn.addEventListener("click", () => {
   titleMusic.stop()
   frameCount = 0
   seconds = 12
+  playgameBtn.innerText = "RESET GAME!"
   meowBtn.innerText = "MEOW!"
   titlescreenBtn.innerText = "TITLE SCREEN"
   gameStatus.innerText = "ESCAPE!"
@@ -531,6 +534,11 @@ playgameBtn.addEventListener("click", () => {
   clearInterval(runCountDown)
   gameInit()
 })
+
+function gameInit() {
+  runGame = setInterval(gameLoop, 60)
+  runCountDown = setInterval(countDown, 1000)
+}
 
 function countDown() {
   seconds--
