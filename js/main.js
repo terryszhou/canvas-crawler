@@ -14,6 +14,7 @@ let seconds = 12
 let runGame
 let runCountDown
 let countDisplay = document.getElementById("countdown")
+let resetBtn = document.getElementById("resetgame")
 
 var walls = []
 
@@ -472,6 +473,20 @@ function gameInit() {
   runGame = setInterval(gameLoop, 60)
   runCountDown = setInterval(countDown, 1000)
 }
+
+resetBtn.addEventListener("click", () => {
+  frameCount = 0
+  seconds = 12
+  gameStatus.innerText = "ESCAPE THE DUNGEON!"
+  countDisplay.innerText = 12
+  ogres = [new Crawler("../img/ghostwhite.png", Math.random() * canvas.width, Math.random() * canvas.height, "#bada55", 20, 20, null)]
+  hero = new Crawler("../img/catneutral.png", 100, 200, "hotpink", 20, 20)
+  exit = new Crawler("../img/doorlocked.png", 180, 5, "white", 60, 60)
+  latchkey = new Crawler("../img/782285-middle.png", 760, 20, "gold", 20, 20)
+  clearInterval(runGame)
+  clearInterval(runCountDown)
+  gameInit()
+})
 
 gameInit()
 
