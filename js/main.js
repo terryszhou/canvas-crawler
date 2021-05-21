@@ -327,7 +327,6 @@ function ogreMove(ogre) {
   let diffY = hero.y - ogre.y
   let speed = 3
   let randomNum = Math.floor((Math.random()*3)*(Math.random() < 0.5 ? -1 : 1))
-
   if (diffX > 0 && diffX < 120 && ogre.x + ogre.width < canvas.width) {
     ogre.x += speed
     ogre.color = "red"
@@ -338,7 +337,6 @@ function ogreMove(ogre) {
     ogre.color = "#bada55"
     ogre.imgSrc = "../img/ghostwhite.png"
   }
-  
   if (diffX < 0 && diffX > -120 && ogre.x > 0) {
     ogre.x -= speed
     ogre.color = "red"
@@ -349,7 +347,6 @@ function ogreMove(ogre) {
     ogre.color = "#bada55"
     ogre.imgSrc = "../img/ghostwhite.png"
   }
-
   if (diffY > 0 && diffY < 120 && ogre.y + ogre.height < canvas.height) {
     ogre.y += speed
     ogre.color = "red"
@@ -360,7 +357,6 @@ function ogreMove(ogre) {
     ogre.color = "#bada55"
     ogre.imgSrc = "../img/ghostwhite.png"
   }
-  
   if (diffY < 0 && diffY > -120 && ogre.y > 0) {
     ogre.y -= speed
     ogre.color = "red"
@@ -436,7 +432,6 @@ function getLatchKey() {
       keyGet.play()
       hero.color = "gold"
       latchkey.alive = false
-
     }
 }
 
@@ -472,7 +467,7 @@ function winGame() {
     }
 }
 
-// GAME PROCESS FUNCTIONS
+// BUTTON FUNCTIONS
 
 titleInit()
 
@@ -535,21 +530,10 @@ playgameBtn.addEventListener("click", () => {
   gameInit()
 })
 
+// GAME LOOP
 function gameInit() {
   runGame = setInterval(gameLoop, 60)
   runCountDown = setInterval(countDown, 1000)
-}
-
-function countDown() {
-  seconds--
-  if (latchkey.alive) {
-  if (seconds == 0) {
-    seconds = 12
-  }
-  countDisplay.innerText = seconds
-  } else {
-    countDisplay.innerText = "KEY GET!!"
-  }
 }
 
 function gameLoop() {
@@ -561,7 +545,6 @@ function gameLoop() {
     quicksands[k].render()
     detectQuickSands(hero, quicksands[k])
   }
-
   // PLAYER FUNCTIONS
   move()
   getLatchKey()
@@ -575,7 +558,6 @@ function gameLoop() {
     checkLatchKeyWall(latchkey, walls[j])
   }
   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-
   // ENEMY FUNCTIONS
   if (frameCount % 100 === 0) {
     createOgres()
@@ -585,7 +567,6 @@ function gameLoop() {
     detectHit(ogres[i])
       ogres[i].render()
   }
-
   // RENDERING FUNCTIONS
   if (hero.alive) {
     hero.render()
@@ -594,566 +575,3 @@ function gameLoop() {
     latchkey.render()
   }
 }
-// DEFECTIVES
-
-// DEPRECATED FEATURE. FULLY FUNCTIONAL.
-// meowBtn.addEventListener("click", () => {
-//   let meowArray = 
-//   [
-//     new Sound("../audio/noisecreations_SFX-NCFREE02_Cat-Meow_x2.mp3"),
-//     new Sound("../audio/Blastwave_FX_CatMeow_SFXB.203.mp3"), 
-//     new Sound("../audio/zapsplat_animals_cat_kitten_meow_006_30182.mp3"),
-//     new Sound("../audio/animals_cat_meow_002.mp3"),
-//     new Sound("../audio/zapsplat_animals_dog_puppy_several_weeks_old_single_bark_ridgeback_cross_bullmastiff_010_56165.mp3")
-//   ]
-//   // for (m = 0; m < meowArray.length; m++) {
-//   //   meowArray[i].play()
-//   // }
-//   let index = Math.floor(Math.random() * 1000) % meowArray.length
-//   meowArray[index].play()
-// })
-
-// UNWANTED OBSTACLE CLASS. STILL USEFUL.
-// class Obstacle{
-//   constructor(x, y, width, height) {
-//     this.x = x
-//     this.y = y
-//     this.width = width
-//     this.height = height
-//   }
-//     render() {
-//       var ballpit = new Image()
-//       ballpit.src = "../img/ballpit.png"
-//       var ballpitpat = ctx.createPattern(ballpit, "repeat")
-//       ctx.fillStyle = ballpitpat
-//       ctx.fillRect(this.x, this.y, this.width, this.height)
-//     }
-// }
-
-// ATTEMPT TO PREVENT ENEMIES FROM TELEFRAGGING PLAYER
-// -- Reloaded ogre location every game cycle.
-// function detectOgreWallPhase(ogre) {
-//   if (
-//     ogre.x + ogre.width >= hero.x &&
-//     ogre.x <= hero.x + hero.width &&
-//     ogre.y <= hero.y + hero.height &&
-//     ogre.y + ogre.height >= hero.y
-//     ) {
-//       ogre.x = 400
-//       ogre.y = 100
-//     } else {
-//       ogre.x = Math.random() * canvas.width
-//       ogre.y = Math.random() * canvas.height
-//     }
-// }
-
-// DOESN'T TRIGGER
-// function detectOgreCollide(ogre1, ogre2) {
-//   let speed = 6
-//   if (
-//     ogre1.x + ogre1.width >= ogre2.x &&
-//     ogre1.x <= ogre2.x + ogre2.width &&
-//     ogre1.y <= ogre2.y + ogre2.height &&
-//     ogre1.y + ogre1.height >= ogre2.y
-//     ) {
-//       if (ogre1.facing == "north" && ogre1.y <= ogre2.y + ogre2.height) {
-//         ogre1.y += speed
-//         ogre2.y -= speed
-//       } else if (ogre1.facing == "south" && ogre1.y + ogre2.height >= ogre2.y) { 
-//         ogre1.y -= speed
-//         ogre2.y += speed
-//       } 
-//     }
-// }
-
-// CONSTANTLY TRIGGERS
-// function detectOgreCollide(ogre1, ogre2) {
-//   if (
-//     ogre1.x + ogre1.width >= ogre2.x &&
-//     ogre1.x <= ogre2.x + ogre2.width &&
-//     ogre1.y <= ogre2.y + ogre2.height &&
-//     ogre1.y + ogre1.height >= ogre2.y
-//     ) {
-//       console.log("Hit!")
-//     }
-// }
-
-// for (l = 0; l < ogres2.length; l++) {
-//   detectOgreCollide(ogres[i], ogres2[l])
-// }
-
-// RECESSIVE FEATURE
-// function attack() {
-//   if(keys[32]) {
-//     hero.color = "blue"
-//   } else {
-//     hero.color = "hotpink"
-//   }
-// }
-
-// SPEEDS UP OGRES. ONLY PREVENTS VERTICAL WALL PHASING, NOT HORIZONTAL
-// function ogreDetectWalls(ogre, wall) {
-//   let speed = 3
-//   let diffX = hero.x - ogre.x
-//   let diffY = hero.y - ogre.y
-//     if (
-//       ogre.x + ogre.width >= wall.x &&
-//       ogre.x <= wall.x + wall.width &&
-//       ogre.y <= wall.y + wall.height &&
-//       ogre.y + ogre.height >= wall.y
-//       ) { 
-//           if (diffY < 0 && ogre.y <= wall.y + wall.height) {
-//             ogre.y += speed
-//           } else if (diffY > 0 && ogre.y + ogre.height >= wall.y) { 
-//             ogre.y -= speed
-//           } else if (diffX < 0 && ogre.x <= wall.x + wall.width) {
-//             ogre.x += speed
-//           } else if (diffX > 0 && ogre.x + ogre.width >= wall.x) {
-//             ogre.x -= speed
-//           }
-//         }
-// }
-
-// DOESN'T PREVENT OGRES FROM GOING THROUGH WALLS. MAKES THEM FASTER INSTEAD. SHIIII-
-// function gameLoop() {
-//   ctx.clearRect(0, 0, canvas.width, canvas.height)
-//   drawWalls()
-//   frameCount++
-//   if (frameCount % 100 === 0) {
-//     createOgres()
-//   }
-//   move()
-//   // for (j = 0; j < walls.length; j++) {
-//   //   detectWalls(walls[j])
-//   // }
-//   attack()
-//   movementDisplay.textContent = `X: ${hero.x} Y: ${hero.y}`
-  
-//   for (j = 0; j < walls.length; j++) {
-//     detectWalls(walls[j])
-//     for (i = 0; i < ogres.length; i++) {
-//       if (ogres[i].alive) {
-//         ogreDetectWalls(ogres[i], walls[j])
-//         console.log(ogres[i].facing)
-//         ogreMove(ogres[i])
-//         detectHit(ogres[i])
-//         ogres[i].render()
-//       }
-//     }
-//   }
-//   hero.render()
-// }
-
-// LOWERED SPEED. UNEXPECTED 'QUICKSAND' EFFECT.
-// function detectWalls(wall) {
-//   let speed = 4
-//       if (
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width &&
-//         hero.y <= wall.y + wall.height &&
-//         hero.y + hero.height >= wall.y
-//       ) { 
-//           if (heroFacing == "north" && hero.y <= wall.y + wall.height) {
-//             // hero.y = wall.y + wall.height
-//             hero.y -= speed
-//           } else if (heroFacing == "south" && hero.y + hero.height >= wall.y) { 
-//             // hero.y = wall.y - hero.height
-//             hero.y += speed
-//           } else if (heroFacing == "west" && hero.x <= wall.x + wall.width) {
-//             // hero.x = wall.x + wall.width
-//             hero.x += speed
-//           } else if (heroFacing == "east" && hero.x + hero.width >= wall.x) {
-//             // hero.x = wall.x -hero.width
-//             hero.x -= speed
-//           }
-//         }
-// }
-
-// DITTO BELOW
-// function detectWalls(wall) {
-//   if (
-//     hero.x + hero.width >= wall.x &&
-//     hero.x <= wall.x + wall.width &&
-//     hero.y <= wall.y + wall.height &&
-//     hero.y + hero.height >= wall.y
-//   ) {
-//   if(hero.y + hero.height >= wall.y && 
-//     hero.x + hero.width >= wall.x && 
-//     hero.x <= wall.x + wall.width &&
-//     (keys[40] || keys[83])) {
-//       hero.y = wall.y - hero.height
-//     }
-//   if(hero.y <= wall.y + wall.height &&
-//     hero.x + hero.width >= wall.x &&
-//     hero.x <= wall.x + wall.width && 
-//     (keys[38] || keys[87])) {
-//       hero.y = wall.y + wall.height
-//     }
-//   if(hero.x + hero.width >= wall.x &&
-//     hero.y + hero.height >= wall.y &&
-//     hero.y <= wall.y + wall.height &&
-//     (keys[39] || keys[68])){
-//       hero.x = wall.x - hero.width
-//     }
-//   if(hero.x <= wall.x + wall.width &&
-//     hero.y + hero.height >= wall.y &&
-//     hero.y <= wall.y + wall.height &&
-//     (keys[37] || keys[65])) {
-//       hero.x = wall.x + wall.width
-//     }
-//   }
-// }
-
-// DITTO BELOW
-// function detectWalls(wall) {
-//   let speed = 8
-//       if (
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width &&
-//         hero.y <= wall.y + wall.height &&
-//         hero.y + hero.height >= wall.y
-//       ) { 
-//           if ((!keys[40] || !keys[83]) && hero.y <= wall.y + wall.height) {
-//             //up statement
-//             hero.y = wall.y + wall.height
-//           } else if ((!keys[38] || !keys[87]) && hero.y + hero.height >= wall.y) { 
-//             //down statement
-//             hero.y = wall.y - hero.height
-//           } else if ((!keys[39] || !keys[68]) && hero.x <= wall.x + wall.width) {
-//             //left statement
-//             hero.x = wall.x + wall.width
-//           } else if ((!keys[37] || !keys[65]) && hero.x + hero.width >= wall.x) {
-//             //right statement
-//             hero.x = wall.x -hero.width
-//           }
-//         }
-// }
-
-// WORKS FOR DIRECT CONTACT; SLIPS WHEN ALTERNATE AXIS INPUTS ARE DETECTED
-// function detectWalls(wall) {
-//   let speed = 8
-//       if (
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width &&
-//         hero.y <= wall.y + wall.height &&
-//         hero.y + hero.height >= wall.y
-//       ) { 
-//           if ((keys[38] || keys[87]) && hero.y <= wall.y + wall.height) {
-//             hero.y = wall.y + wall.height
-//           } else if ((keys[40] || keys[83]) && hero.y + hero.height >= wall.y) { 
-//             hero.y = wall.y - hero.height
-//           } else if ((keys[37] || keys[65]) && hero.x <= wall.x + wall.width) {
-//             hero.x = wall.x + wall.width
-//           } else if ((keys[39] || keys[68]) && hero.x + hero.width >= wall.x) {
-//             hero.x = wall.x -hero.width
-//           }
-//         }
-// }
-
-// ZIPS HERO TO BOTTOM-RIGHT CORNER OF WALL UPON CONTACT
-// -- Without nested conditional, does the same as above when invisible thresholds are crossed.
-// function detectWalls(wall) {
-//   let speed = 8
-//       if (
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width &&
-//         hero.y <= wall.y + wall.height &&
-//         hero.y + hero.height >= wall.y
-//       ) 
-//       {
-//       if(hero.y + hero.height >= wall.y && 
-//         hero.x + hero.width >= wall.x && 
-//         hero.x <= wall.x + wall.width) {
-//           speed = 0
-//           hero.y = wall.y - hero.height
-//         }
-//       if(hero.y <= wall.y + wall.height &&
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width) {
-//           speed = 0
-//           hero.y = wall.y + wall.height
-//         }
-//       if(hero.x + hero.width >= wall.x &&
-//         hero.y + hero.height >= wall.y &&
-//         hero.y <= wall.y + wall.height) {
-//           speed = 0
-//           hero.x = wall.x - hero.width
-//         }
-//       if(hero.x <= wall.x + wall.width &&
-//         hero.y + hero.height >= wall.y &&
-//         hero.y <= wall.y + wall.height) {
-//           speed = 
-//           hero.x = wall.x + wall.width
-//         }
-//       }
-// }
-
-// ONLY TRIGGERS FIRST NESTED CONDITIONAL
-// -- Without nesting, teleports hero when crossing wall thresholdl regardless of location
-// function detectWalls(wall) {
-//   let speed = 8
-//   let currentX = hero.x
-//   let currentY = hero.y
-//       // if (
-//       //   hero.x + hero.width >= wall.x &&
-//       //   hero.x <= wall.x + wall.width &&
-//       //   hero.y <= wall.y + wall.height &&
-//       //   hero.y + hero.height >= wall.y
-//       // ) {
-//       //     console.log(hero.height)
-//       //     console.log(wall.y)
-//       //     if (hero.y <= wall.y + wall.height) {
-//       //       speed = 0
-//       //       hero.y = wall.y + wall.height
-//       //     } else if (hero.y + hero.height >= wall.y) { 
-//       //       speed = 0
-//       //       wall.y = hero.y + hero.height
-//       //     } else if (hero.x <= wall.x + wall.width) {
-//       //       speed = 0
-//       //       hero.x = wall.x + wall.width
-//       //     } else if (hero.x + hero.width >= wall.x) {
-//       //       speed = 0
-//       //       wall.x = hero.x + hero.width
-//       //     }
-//       //   }
-
-// FREEZES ALL MOVEMENT
-// function move(wall) {
-//   const speed = 8
-//       if (
-//         hero.x + hero.width >= wall.x &&
-//         hero.x <= wall.x + wall.width &&
-//         hero.y <= wall.y + wall.height &&
-//         hero.y + hero.height >= wall.y
-//       ) {
-//         if((keys[38] || keys[87]) && hero.y > 0 && hero.y >= wall.y + wall.height) {
-//           hero.y -= speed
-//         } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height && hero.y + hero.height <= wall.y) { 
-//           hero.y += speed
-//         } else if((keys[37] || keys[65]) && hero.x > 0 && hero.x >= wall.x + wall.width) {
-//           hero.x -= speed
-//         } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width && hero.x + hero.width <= wall.x) {
-//           hero.x += speed
-//         }
-//         }
-// }
-
-//  SHOOTS HERO UPWARDS
-// // function detectCanvasBounds() {
-// //   const speed = 8
-// //   if (hero.y > 0) {
-// //     hero.y -= speed
-// //   } else if (hero.y + hero.height < canvas.height) {
-// //     hero.y += speed
-// //   } else if (hero.x > 0) {
-// //     hero.x -= speed
-// //   } else if (hero.x + hero.width < canvas.width) {
-// //     hero.x += speed
-// //   }
-// // }
-
-// DETECTS HERO MOVEMENT THROUGH WALLS, BUT DOESN'T STOP IT.
-// function detectWalls(wall) {
-  //   if (
-  //     hero.x + hero.width >= wall.x &&
-  //     hero.x <= wall.x + wall.width &&
-  //     hero.y <= wall.y + wall.height &&
-  //     hero.y + hero.height >= wall.y
-  //     ) {
-  //       heroMovement = -heroMovement
-  //       console.log(heroMovement)
-  //     }
-  // }
-
-// HITS INVISIBLE WALLS
-// function move() {
-//   const speed = 8
-//   for (i = 0; i < walls.length; i++) {
-//     if((keys[38] || keys[87]) && hero.y > 0 && hero.y > walls[i].y + walls[i].height) {
-//       hero.y -= speed
-//     } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height && hero.y + hero.height < walls[i].y) { 
-//       hero.y += speed
-//     } else if((keys[37] || keys[65]) && hero.x > 0 && hero.x > walls[i].x + walls[i].width) {
-//       hero.x -= speed
-//     } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width && hero.x + hero.width < walls[i].x) {
-//       hero.x += speed
-//     }
-//   }
-// }
-
-// SMOOTH MOVEMENT, SHORT CODE, NO DIAGONALS
-// window.addEventListener("keydown", keysPressed, false)
-// window.addEventListener("keyup", keysReleased, false)
-
-// var keys = []
-
-// function keysPressed(e) {
-//   keys[e.keyCode] = true
-// }
-// function keysReleased(e) {
-//   keys[e.keyCode] = false
-// }
-
-// function move() {
-//   const speed = 8
-//   if((keys[38] || keys[87]) && hero.y > 0) {
-//     hero.y -= speed
-//   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
-//     hero.y += speed
-//   } else if((keys[37] || keys[65]) && hero.x > 0) {
-//     hero.x -= speed
-//   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
-//     hero.x += speed
-//   }
-// }
-
-// SMOOTH MOVEMENT. LONG FORM, MORE RELIANT ON TRUE/FALSE STATEMENTS.
-// var Keys = {
-//   up: false,
-//   down: false,
-//   left: false,
-//   right: false,
-// }
-
-// window.onkeydown = function(e) {
-//   e.preventDefault()
-//   var kc = e.keyCode
-//   if(kc === 37 || kc === 65) Keys.left = true;
-//   if(kc === 38 || kc === 87) Keys.up = true;
-//   if(kc === 39 || kc === 68) Keys.right = true;
-//   if(kc === 40 || kc === 83) Keys.down = true;
-// }
-
-// window.onkeyup = function(e) {
-//   e.preventDefault()
-//   var kc = e.keyCode
-//   if(kc === 37 || kc === 65) Keys.left = false;
-//   if(kc === 38 || kc === 87) Keys.up = false;
-//   if(kc === 39 || kc === 68) Keys.right = false;
-//   if(kc === 40 || kc === 83) Keys.down = false;
-// }
-
-// function move() {
-//   const speed = 10
-//   if(Keys.up && hero.y > 0) {
-//     hero.y -= speed
-//   } else if(Keys.down && hero.y + hero.height < canvas.height) { 
-//     hero.y += speed
-//   } else if(Keys.left && hero.x > 0) {
-//     hero.x -= speed
-//   } else if(Keys.right && hero.x + hero.width < canvas.width) {
-//     hero.x += speed
-//   }
-// }
-
-// ALLOWS DIAGONAL MOVEMENT. STILL JERKY.
-// window.addEventListener("keydown", keysPressed, false)
-// window.addEventListener("keyup", keysReleased, false)
-
-// var keys = []
-
-// function keysPressed(e) {
-//   const speed = 10
-//   keys[e.keyCode] = true
-//   if(keys[37]) {
-//     hero.x -= speed
-//   }
-//   if(keys[38]) {
-//     hero.y -= speed
-//   }
-//   if(keys[39]) {
-//     hero.x += speed
-//   }
-//   if(keys[40]) {
-//     hero.y += speed
-//   }
-// }
-
-// function keysReleased(e) {
-//   keys[e.keyCode] = false
-// }
-
-
-// OGRE MOVEMENT --> Favors first condition, unknown reason.
-// function ogreMove() {
-//   const speed = 5
-//   let randomOgreKey = ogreKeys[Math.floor(Math.random() * ogreKeys.length)]
-//   console.log(randomOgreKey)
-//   if(randomOgreKey = "up" && ogre.y > 0) {
-//     ogre.y -= speed
-//   } else if (randomOgreKey = "down" && ogre.y + ogre.height < canvas.height) {
-//     ogre.y += speed
-//   } else if (randomOgreKey = "left" && ogre.x > 0) {
-//     ogre.x -= speed
-//   } else if (randomOgreKey = "right" && ogre.x + ogre.width < canvas.width) {
-//     ogre.x += speed
-//   }
-// }
-
-//  OGRE MOVEMENT --> Works, but is extremely juddery
-// function ogreMove() {
-//   const speed = 10
-//   ogre.x += Math.floor(Math.random() * speed)
-//   ogre.x -= Math.floor(Math.random() * speed)
-//   ogre.y += Math.floor(Math.random() * speed)
-//   ogre.y -= Math.floor(Math.random() * speed)
-// }
-
-// RANDOM OGRE STARTING POSITION
-// let ogre = new Crawler(Math.floor(Math.random() * (canvas.width - 25)), Math.floor(Math.random() * (canvas.height - 25)), "#bada55", 100, 100)
-
-// BOUNDED MOVEMENT, NESTED CONDITIONALS --> Functional, but replaced for readability)
-// function move() {
-//   const speed = 10
-//   if(Keys.up) {
-//     if(hero.y > 0) {
-//     hero.y -= speed
-//   }
-// } else if(Keys.down) {
-//   if(hero.y + hero.height < canvas.height) {
-//     hero.y += speed
-//   }
-// } else if(Keys.left) {
-//     if(hero.x > 0) {
-//     hero.x -= speed
-//   }
-// } else if(Keys.right) {
-//   if(hero.x + hero.width < canvas.width) {
-//     hero.x += speed
-//   }
-// }
-// }
-
-// DIAGONAL MOVEMENT SOLUTION --> Creates slow, jerky movement. Also: render bug.
-// var map = {}
-
-// onkeydown = onkeyup = function(e) {
-//   map[e.keyCode] = e.type == "keydown"
-//   console.log(map)
-//   const speed = 10
-//   if (e.keyCode === 87 || e.keyCode === 38)  {
-//     hero.y -= speed
-//   } else if (e.keyCode === 65 || e.keyCode === 37) {
-//     hero.x -= speed
-//   } else if (e.keyCode === 83 || e.keyCode === 40) {
-//     hero.y += speed
-//   } else if (e.keyCode ===68 || e.keyCode === 39) {
-//     hero.x += speed
-// }
-// }
-
-// BASIC MOVEMENT --> creates slow, jerky movement with a startup delay
-// document.addEventListener('keydown', movementHandler)
-
-// function movementHandler(e) {
-//   const speed = 10
-//   if (e.keyCode === 87 || e.keyCode === 38)  {
-//     hero.y -= speed
-//   } else if (e.keyCode === 65 || e.keyCode === 37) {
-//     hero.x -= speed
-//   } else if (e.keyCode === 83 || e.keyCode === 40) {
-//     hero.y += speed
-//   } else if (e.keyCode ===68 || e.keyCode === 39) {
-//     hero.x += speed
-//   }
-// }
