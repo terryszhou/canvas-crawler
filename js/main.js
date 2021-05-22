@@ -226,30 +226,24 @@ function move() {
     hero.facing = "north"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "img/catnorth1.png"
-        // hero.imgSrc = "img/hoodkidup1.png"
       } else {
         hero.imgSrc = "img/catnorth2.png"
-        // hero.imgSrc = "img/hoodkidup2.png"
       }
   } else if((keys[40] || keys[83]) && hero.y + hero.height < canvas.height) { 
     hero.y += speed
     hero.facing = "south"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "img/catsouth1.png"
-        // hero.imgSrc = "img/hoodkiddown1.png"
       } else {
         hero.imgSrc = "img/catsouth2.png"
-        // hero.imgSrc = "img/hoodkiddown2.png"
       }
   } else if((keys[37] || keys[65]) && hero.x > 0) {
     hero.x -= speed
     hero.facing = "west"
       if (frameCount % 2 == 0) {
         hero.imgSrc = "img/catwest1.png"
-        // hero.imgSrc = "img/hoodkidleft1.png"
       } else {
         hero.imgSrc = "img/catwest2.png"
-        // hero.imgSrc = "img/hoodkidleft2.png"
 
       }
   } else if((keys[39] || keys[68]) && hero.x + hero.width < canvas.width) {
@@ -277,6 +271,8 @@ function detectWalls(hero, wall) {
       hero.y <= wall.y + wall.height &&
       hero.y + hero.height >= wall.y
       ) { 
+        let bump = new Sound("audio/8bitbump.mov")
+        bump.play()
           if (hero.facing == "north" && hero.y <= wall.y + wall.height) {
             hero.y += speed
           } else if (hero.facing == "south" && hero.y + hero.height >= wall.y) { 
@@ -376,17 +372,22 @@ function detectHit(ogre) {
     hero.y + hero.height >= ogre.y
     ) {
       hero.alive = false
-      // hero.imgSrc = "img/catdead.png"
       clearInterval(runGame)
       clearInterval(runCountDown)
       gameStatus.innerText = "DEAD!"
+      let gameOver = new Sound ("audio/zapsplat_cartoon_descend_fast_marimba_18054.mp3")
+      gameOver.play()
     }
 }
 
 // LATCHKEY FUNCTIONS 
 function respawnLatchKey() {
-  latchkey.x = Math.random() * canvas.width - 10
-  latchkey.y = Math.random() * canvas.height - 10
+  if (latchkey.alive) {
+    latchkey.x = Math.random() * canvas.width - 10
+    latchkey.y = Math.random() * canvas.height - 10
+    let keySpawn = new Sound("audio/zapsplat_foley_swipe_whoosh_whip_fast_001_62070.mp3")
+    keySpawn.play()
+  }
 }
 
 function checkLatchKeyWall(latchkey, wall) {
@@ -415,8 +416,8 @@ function countDown() {
     }
     countDisplay.innerText = seconds
   } else {
-      countDisplay.innerText = "KEY GET!!"
     countDisplay.style.color = "goldenrod"
+    countDisplay.innerText = "KEY GET!!"
   }
 }
 
@@ -438,6 +439,8 @@ function getLatchKey() {
       keyGet.play()
       hero.color = "gold"
       latchkey.alive = false
+      delete latchkey.x
+      delete latchkey.y
     }
 }
 
